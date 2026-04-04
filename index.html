@@ -107,7 +107,7 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wandpc2V3dXN1dGxyZ3ZiZWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTg5NzcsImV4cCI6MjA5MDg5NDk3N30.qTQ5OOcF4LjaFmEIDaqPO46MjtiboH1s6gLbMYMJU6E';
         const TOTAL_EPISODES = 476; // Estimation du total actuel
         const MINS_PER_EP = 25; // Durée moyenne
-        const ROW_ID = 2; // L'ID de ta ligne dans la DB
+        const ROW_ID = 1; // L'ID de ta ligne dans la DB
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 		let currentWatched = 0;
@@ -116,7 +116,7 @@
 		async function fetchProgress() {
 			// CORRECTION : On utilise supabaseClient
 			const { data, error } = await supabaseClient
-				.from('one_pace_progress')
+				.from('one_noobiece')
 				.select('episodes_watched')
 				.eq('id', ROW_ID)
 				.single();
@@ -135,7 +135,7 @@
 
 			// CORRECTION : On utilise supabaseClient
 			const { error } = await supabaseClient
-				.from('one_pace_progress')
+				.from('one_noobiece')
 				.update({ episodes_watched: currentWatched, updated_at: new Date().toISOString() })
 				.eq('id', ROW_ID);
 
