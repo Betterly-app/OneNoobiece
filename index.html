@@ -7,46 +7,65 @@
     <link rel="icon" href="data:,">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+		/* Thème Clair - One Piece */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #ffffff;
-            color: #2d2d2d;
+            background-color: #f4f6f8; /* Gris très clair pour le fond */
+            color: #333333; /* Texte sombre pour la lisibilité */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+        
         .card {
-            background-color: #1e1e1e;
+            background-color: #ffffff; /* Carte blanche */
             border-radius: 15px;
             padding: 20px;
             width: 100%;
             max-width: 350px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             text-align: center;
+            border-top: 5px solid #E3000F; /* Ligne rouge Luffy en haut */
         }
-        h1 { margin-top: 0; color: #0563fb; font-size: 1.5em; }
+        
+        h1 { 
+            margin-top: 0; 
+            color: #E3000F; /* Rouge officiel One Piece */
+            font-size: 1.6em; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
         
         .progress-bar {
             width: 100%;
-            background-color: #333;
+            background-color: #e0e0e0;
             border-radius: 10px;
             overflow: hidden;
-            height: 20px;
+            height: 22px;
             margin: 15px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
+        
         .progress-fill {
             height: 100%;
-            background-color: #f52a2a;
+            background-color: #FBC02D; /* Jaune Chapeau de paille */
             width: 0%;
             transition: width 0.5s ease;
         }
         
+        #percentage-text {
+            font-weight: bold;
+            color: #005C97; /* Bleu Océan */
+            margin-bottom: 10px;
+        }
+
         button {
-            background-color: #0966fb;
-            color: white;
-            border: none;
+            background-color: #E3000F; /* Rouge Luffy */
+            color: #ffffff;
+            border: 2px solid #E3000F;
             padding: 15px 30px;
             font-size: 1.1em;
             border-radius: 30px;
@@ -54,51 +73,83 @@
             width: 100%;
             font-weight: bold;
             margin: 15px 0;
+            box-shadow: 0 4px 6px rgba(227, 0, 15, 0.3);
+            transition: all 0.2s ease;
         }
-        button:active { background-color: #1976d2; }
+        
+        button:active { 
+            background-color: #b7000c; 
+            box-shadow: 0 2px 3px rgba(227, 0, 15, 0.3);
+            transform: translateY(2px);
+        }
 
-        /* Nouveaux styles pour les Arcs */
+        /* Liste des Arcs */
         .arc-list {
             margin-top: 20px;
             text-align: left;
-            max-height: 250px;
+            max-height: 280px;
             overflow-y: auto;
             padding-right: 5px;
         }
+        
         .arc-item {
-            background: #2c2c2c;
+            background: #ffffff;
             margin-bottom: 10px;
             padding: 12px;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid #333;
+            border: 1px solid #eeeeee;
+            border-left: 5px solid #cccccc; /* Gris par défaut (non commencé) */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
+        
         .arc-item.completed {
-            border-left-color: #4caf50;
-            opacity: 0.7;
+            border-left-color: #005C97; /* Bleu pour les arcs terminés */
+            background-color: #f0f7ff;
         }
+        
         .arc-item.in-progress {
-            border-left-color: #ffeb3b;
+            border-left-color: #FBC02D; /* Jaune pour l'arc en cours */
+            background-color: #fffdf5;
         }
-        .arc-title { font-weight: bold; font-size: 0.9em; }
-        .arc-progress { font-size: 0.8em; color: #aaa; background: #1e1e1e; padding: 4px 8px; border-radius: 12px;}
+        
+        .arc-title { 
+            font-weight: 700; 
+            font-size: 0.9em; 
+            color: #333;
+        }
+        
+        .arc-progress { 
+            font-size: 0.85em; 
+            color: #555; 
+            background: #f0f0f0; 
+            padding: 4px 8px; 
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        /* Personnalisation de la barre de défilement (scroll) */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bbb; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1>One Pace Tracker</h1>
+        <h1>One Pace</h1>
         
         <div class="progress-bar">
             <div class="progress-fill" id="progress-fill"></div>
         </div>
-        <div id="percentage-text" style="margin-bottom: 10px;">0% complété</div>
+        <div id="percentage-text">0% complété</div>
 
         <button onclick="addEpisode()">+ 1 Épisode Vu</button>
 
-        <h3 style="text-align: left; margin-bottom: 5px; font-size: 1em; color: #aaa;">Progression par Arc</h3>
+        <h3 style="text-align: left; margin-bottom: 10px; font-size: 1em; color: #666; border-bottom: 2px solid #eee; padding-bottom: 5px;">Progression par Arc</h3>
         <div class="arc-list" id="arcs-container">
             </div>
     </div>
