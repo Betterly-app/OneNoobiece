@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-	<link rel="icon" href="data:,">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>One Pace Tracker</title>
+    <link rel="icon" href="data:,">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #ffffff;
+            color: #2d2d2d;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -26,37 +26,25 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             text-align: center;
         }
-        h1 { margin-top: 0; color: #ffeb3b; }
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        .stat-box {
-            background: #2c2c2c;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .stat-label { font-size: 0.8em; color: #aaa; }
-        .stat-value { font-size: 1.2em; font-weight: bold; margin-top: 5px; }
+        h1 { margin-top: 0; color: #0563fb; font-size: 1.5em; }
+        
         .progress-bar {
             width: 100%;
             background-color: #333;
             border-radius: 10px;
             overflow: hidden;
             height: 20px;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         .progress-fill {
             height: 100%;
-            background-color: #4caf50;
+            background-color: #f52a2a;
             width: 0%;
             transition: width 0.5s ease;
         }
+        
         button {
-            background-color: #2196f3;
+            background-color: #0966fb;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -65,8 +53,37 @@
             cursor: pointer;
             width: 100%;
             font-weight: bold;
+            margin: 15px 0;
         }
         button:active { background-color: #1976d2; }
+
+        /* Nouveaux styles pour les Arcs */
+        .arc-list {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .arc-item {
+            background: #2c2c2c;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #333;
+        }
+        .arc-item.completed {
+            border-left-color: #4caf50;
+            opacity: 0.7;
+        }
+        .arc-item.in-progress {
+            border-left-color: #ffeb3b;
+        }
+        .arc-title { font-weight: bold; font-size: 0.9em; }
+        .arc-progress { font-size: 0.8em; color: #aaa; background: #1e1e1e; padding: 4px 8px; border-radius: 12px;}
     </style>
 </head>
 <body>
@@ -77,91 +94,125 @@
         <div class="progress-bar">
             <div class="progress-fill" id="progress-fill"></div>
         </div>
-        <div id="percentage-text">0% complété</div>
-
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-label">Épisodes vus</div>
-                <div class="stat-value" id="eps-watched">--</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Restants</div>
-                <div class="stat-value" id="eps-remaining">--</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Heures vues</div>
-                <div class="stat-value" id="hours-watched">-- h</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Heures restantes</div>
-                <div class="stat-value" id="hours-remaining">-- h</div>
-            </div>
-        </div>
+        <div id="percentage-text" style="margin-bottom: 10px;">0% complété</div>
 
         <button onclick="addEpisode()">+ 1 Épisode Vu</button>
+
+        <h3 style="text-align: left; margin-bottom: 5px; font-size: 1em; color: #aaa;">Progression par Arc</h3>
+        <div class="arc-list" id="arcs-container">
+            </div>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const SUPABASE_URL = 'https://opjwisewusutlrgvbegc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wandpc2V3dXN1dGxyZ3ZiZWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTg5NzcsImV4cCI6MjA5MDg5NDk3N30.qTQ5OOcF4LjaFmEIDaqPO46MjtiboH1s6gLbMYMJU6E';
-        const TOTAL_EPISODES = 476; // Estimation du total actuel
-        const MINS_PER_EP = 25; // Durée moyenne
-        const ROW_ID = 1; // L'ID de ta ligne dans la DB
-
+        // --- CONFIGURATION SUPABASE ---
+		const SUPABASE_URL = 'https://opjwisewusutlrgvbegc.supabase.co';
+		const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wandpc2V3dXN1dGxyZ3ZiZWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTg5NzcsImV4cCI6MjA5MDg5NDk3N30.qTQ5OOcF4LjaFmEIDaqPO46MjtiboH1s6gLbMYMJU6E';
+        const ROW_ID = 1; // À REMPLACER PAR TON ID
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-		let currentWatched = 0;
+        
+        let currentWatched = 2;
 
-		// --- FONCTIONS ---
-		async function fetchProgress() {
-			// CORRECTION : On utilise supabaseClient
-			const { data, error } = await supabaseClient
-				.from('one_noobiece')
-				.select('episodes_watched')
-				.eq('id', ROW_ID)
-				.single();
+        // --- DONNÉES DES ARCS ONE PACE (À compléter) ---
+        // J'ai mis les premiers, tu peux rajouter la suite facilement !
+        const ARCS = [
+            { title: "Romance Dawn", count: 4 },
+            { title: "Orange Town", count: 3 },
+            { title: "Syrup Village", count: 5 },
+            { title: "Gaimon", count: 1 },
+            { title: "Baratie", count: 7 },
+            { title: "Arlong Park", count: 14 },
+            { title: "Loguetown", count: 2 },
+            { title: "Reverse Mountain", count: 2 },
+            { title: "Whisky Peak", count: 2 },
+            { title: "Little Garden", count: 5 },
+            { title: "Drum Island", count: 5 },
+            { title: "Alabasta", count: 21 },
+            { title: "Jaya", count: 8 },
+            { title: "Skypiea", count: 25 },
+            { title: "rest of one piece", count: 372 },
+            // Ajoute les autres arcs ici au fur et à mesure...
+        ];
 
-			if (error) {
-				console.error("Erreur de récupération:", error);
-				return;
-			}
-			currentWatched = data.episodes_watched;
-			updateUI();
-		}
+        // Le total se calcule tout seul en additionnant les nombres ci-dessus !
+        const TOTAL_EPISODES = ARCS.reduce((sum, arc) => sum + arc.count, 0);
 
-		async function addEpisode() {
-			currentWatched++;
-			updateUI(); // Maj optimiste pour la réactivité
+        // --- FONCTIONS ---
+        async function fetchProgress() {
+            const { data, error } = await supabaseClient
+                .from('one_noobiece') // OU 'one_pace_progress' selon ta table
+                .select('episodes_watched')
+                .eq('id', ROW_ID)
+                .single();
 
-			// CORRECTION : On utilise supabaseClient
-			const { error } = await supabaseClient
-				.from('one_noobiece')
-				.update({ episodes_watched: currentWatched, updated_at: new Date().toISOString() })
-				.eq('id', ROW_ID);
+            if (error) {
+                console.error("Erreur de récupération:", error);
+                return;
+            }
+            currentWatched = data.episodes_watched;
+            updateUI();
+        }
 
-			if (error) {
-				console.error("Erreur de mise à jour:", error);
-				currentWatched--; // Rollback en cas d'erreur
-				updateUI();
-				alert("Erreur lors de la sauvegarde !");
-			}
-		}
+        async function addEpisode() {
+            currentWatched++;
+            updateUI(); 
 
-		function updateUI() {
-			const remaining = Math.max(0, TOTAL_EPISODES - currentWatched);
-			const percentage = ((currentWatched / TOTAL_EPISODES) * 100).toFixed(1);
-			
-			const hoursWatched = ((currentWatched * MINS_PER_EP) / 60).toFixed(1);
-			const hoursRemaining = ((remaining * MINS_PER_EP) / 60).toFixed(1);
+            const { error } = await supabaseClient
+                .from('one_noobiece') // Pareil, vérifie ton nom de table
+                .update({ episodes_watched: currentWatched, updated_at: new Date().toISOString() })
+                .eq('id', ROW_ID);
 
-			document.getElementById('eps-watched').innerText = currentWatched;
-			document.getElementById('eps-remaining').innerText = remaining;
-			document.getElementById('hours-watched').innerText = hoursWatched + ' h';
-			document.getElementById('hours-remaining').innerText = hoursRemaining + ' h';
-			
-			document.getElementById('progress-fill').style.width = percentage + '%';
-			document.getElementById('percentage-text').innerText = percentage + '% complété';
-		}
+            if (error) {
+                console.error("Erreur de sauvegarde:", error);
+                currentWatched--; 
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            // Mise à jour de la barre globale
+            const percentage = Math.min(100, ((currentWatched / TOTAL_EPISODES) * 100)).toFixed(1);
+            document.getElementById('progress-fill').style.width = percentage + '%';
+            document.getElementById('percentage-text').innerText = `${currentWatched} / ${TOTAL_EPISODES} épisodes (${percentage}%)`;
+
+            // Mise à jour de la liste des Arcs
+            renderArcs();
+        }
+
+        function renderArcs() {
+            const container = document.getElementById('arcs-container');
+            container.innerHTML = ''; // On vide la liste avant de la recréer
+            
+            let episodesLeftToDistribute = currentWatched;
+
+            ARCS.forEach(arc => {
+                let watchedInThisArc = 0;
+                
+                // Calcul de combien d'épisodes de cet arc ont été vus
+                if (episodesLeftToDistribute >= arc.count) {
+                    watchedInThisArc = arc.count;
+                    episodesLeftToDistribute -= arc.count;
+                } else if (episodesLeftToDistribute > 0) {
+                    watchedInThisArc = episodesLeftToDistribute;
+                    episodesLeftToDistribute = 0;
+                }
+
+                // Création du visuel
+                const div = document.createElement('div');
+                div.className = 'arc-item';
+                
+                if (watchedInThisArc === arc.count) {
+                    div.classList.add('completed');
+                } else if (watchedInThisArc > 0) {
+                    div.classList.add('in-progress');
+                }
+
+                div.innerHTML = `
+                    <div class="arc-title">${arc.title}</div>
+                    <div class="arc-progress">${watchedInThisArc} / ${arc.count}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
 
         // --- INITIALISATION ---
         fetchProgress();
