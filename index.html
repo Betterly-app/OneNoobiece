@@ -103,65 +103,65 @@
 
     <script>
         // --- CONFIGURATION ---
-        const SUPABASE_URL = 'opjwisewusutlrgvbegc';
+        const SUPABASE_URL = 'sb_publishable_rA7rQX-wA7BlLdrUOgvJ9A_NDdl7oCt';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wandpc2V3dXN1dGxyZ3ZiZWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTg5NzcsImV4cCI6MjA5MDg5NDk3N30.qTQ5OOcF4LjaFmEIDaqPO46MjtiboH1s6gLbMYMJU6E';
         const TOTAL_EPISODES = 476; // Estimation du total actuel
         const MINS_PER_EP = 25; // Durée moyenne
         const ROW_ID = 2; // L'ID de ta ligne dans la DB
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentWatched = 0;
+		let currentWatched = 0;
 
-    // --- FONCTIONS ---
-    async function fetchProgress() {
-        // CORRECTION : On utilise supabaseClient
-        const { data, error } = await supabaseClient
-            .from('one_pace_progress')
-            .select('episodes_watched')
-            .eq('id', ROW_ID)
-            .single();
+		// --- FONCTIONS ---
+		async function fetchProgress() {
+			// CORRECTION : On utilise supabaseClient
+			const { data, error } = await supabaseClient
+				.from('one_pace_progress')
+				.select('episodes_watched')
+				.eq('id', ROW_ID)
+				.single();
 
-        if (error) {
-            console.error("Erreur de récupération:", error);
-            return;
-        }
-        currentWatched = data.episodes_watched;
-        updateUI();
-    }
+			if (error) {
+				console.error("Erreur de récupération:", error);
+				return;
+			}
+			currentWatched = data.episodes_watched;
+			updateUI();
+		}
 
-    async function addEpisode() {
-        currentWatched++;
-        updateUI(); // Maj optimiste pour la réactivité
+		async function addEpisode() {
+			currentWatched++;
+			updateUI(); // Maj optimiste pour la réactivité
 
-        // CORRECTION : On utilise supabaseClient
-        const { error } = await supabaseClient
-            .from('one_pace_progress')
-            .update({ episodes_watched: currentWatched, updated_at: new Date().toISOString() })
-            .eq('id', ROW_ID);
+			// CORRECTION : On utilise supabaseClient
+			const { error } = await supabaseClient
+				.from('one_pace_progress')
+				.update({ episodes_watched: currentWatched, updated_at: new Date().toISOString() })
+				.eq('id', ROW_ID);
 
-        if (error) {
-            console.error("Erreur de mise à jour:", error);
-            currentWatched--; // Rollback en cas d'erreur
-            updateUI();
-            alert("Erreur lors de la sauvegarde !");
-        }
-    }
+			if (error) {
+				console.error("Erreur de mise à jour:", error);
+				currentWatched--; // Rollback en cas d'erreur
+				updateUI();
+				alert("Erreur lors de la sauvegarde !");
+			}
+		}
 
-    function updateUI() {
-        const remaining = Math.max(0, TOTAL_EPISODES - currentWatched);
-        const percentage = ((currentWatched / TOTAL_EPISODES) * 100).toFixed(1);
-        
-        const hoursWatched = ((currentWatched * MINS_PER_EP) / 60).toFixed(1);
-        const hoursRemaining = ((remaining * MINS_PER_EP) / 60).toFixed(1);
+		function updateUI() {
+			const remaining = Math.max(0, TOTAL_EPISODES - currentWatched);
+			const percentage = ((currentWatched / TOTAL_EPISODES) * 100).toFixed(1);
+			
+			const hoursWatched = ((currentWatched * MINS_PER_EP) / 60).toFixed(1);
+			const hoursRemaining = ((remaining * MINS_PER_EP) / 60).toFixed(1);
 
-        document.getElementById('eps-watched').innerText = currentWatched;
-        document.getElementById('eps-remaining').innerText = remaining;
-        document.getElementById('hours-watched').innerText = hoursWatched + ' h';
-        document.getElementById('hours-remaining').innerText = hoursRemaining + ' h';
-        
-        document.getElementById('progress-fill').style.width = percentage + '%';
-        document.getElementById('percentage-text').innerText = percentage + '% complété';
-    }
+			document.getElementById('eps-watched').innerText = currentWatched;
+			document.getElementById('eps-remaining').innerText = remaining;
+			document.getElementById('hours-watched').innerText = hoursWatched + ' h';
+			document.getElementById('hours-remaining').innerText = hoursRemaining + ' h';
+			
+			document.getElementById('progress-fill').style.width = percentage + '%';
+			document.getElementById('percentage-text').innerText = percentage + '% complété';
+		}
 
         // --- INITIALISATION ---
         fetchProgress();
