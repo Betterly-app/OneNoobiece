@@ -431,6 +431,95 @@
 			line-height: 1.4;
 		}
 
+		/* --- ONGLET DICTIONNAIRE --- */
+		.dico-filters {
+			display: flex;
+			gap: 6px;
+			margin-bottom: 12px;
+			flex-wrap: wrap;
+		}
+		.dico-filter-btn {
+			padding: 5px 10px !important;
+			font-size: 0.72em !important;
+			border-radius: 20px !important;
+			border: 2px solid #ddd !important;
+			background: #fff !important;
+			color: #555 !important;
+			cursor: pointer;
+			font-weight: 600;
+			transition: all 0.2s;
+			flex: 1;
+		}
+		.dico-filter-btn.active-dico { color: #fff !important; border-color: transparent !important; }
+		.dico-filter-btn[data-cat="all"].active-dico       { background: #333 !important; }
+		.dico-filter-btn[data-cat="Fluide"].active-dico    { background: #1565C0 !important; }
+		.dico-filter-btn[data-cat="Factions"].active-dico  { background: #E3000F !important; }
+		.dico-filter-btn[data-cat="Géographie"].active-dico{ background: #2e7d32 !important; }
+		.dico-filter-btn[data-cat="Lore"].active-dico      { background: #6a0dad !important; }
+		.dico-filter-btn[data-cat="Combat"].active-dico    { background: #e65100 !important; }
+		.dico-filter-btn[data-cat="Divers"].active-dico    { background: #546e7a !important; }
+
+		.dico-list {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			max-height: 430px;
+			overflow-y: auto;
+			padding-right: 4px;
+		}
+		.dico-card {
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 10px;
+			padding: 10px 12px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+			cursor: pointer;
+			transition: box-shadow 0.2s;
+		}
+		.dico-card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+		.dico-card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 8px;
+		}
+		.dico-term {
+			font-weight: 700;
+			font-size: 0.92em;
+			color: #222;
+		}
+		.dico-cat-badge {
+			font-size: 0.68em;
+			font-weight: bold;
+			padding: 3px 7px;
+			border-radius: 12px;
+			color: #fff;
+			white-space: nowrap;
+			flex-shrink: 0;
+		}
+		.cat-Fluide     { background: #1565C0; }
+		.cat-Factions   { background: #E3000F; }
+		.cat-Géographie { background: #2e7d32; }
+		.cat-Lore       { background: #6a0dad; }
+		.cat-Combat     { background: #e65100; }
+		.cat-Divers     { background: #546e7a; }
+
+		.dico-def {
+			font-size: 0.82em;
+			color: #555;
+			line-height: 1.5;
+			margin-top: 6px;
+			display: none; /* Masqué par défaut, révélé au clic */
+		}
+		.dico-def.open { display: block; }
+		.dico-arrow {
+			font-size: 0.8em;
+			color: #bbb;
+			transition: transform 0.2s;
+			flex-shrink: 0;
+		}
+		.dico-arrow.open { transform: rotate(180deg); }
+
     </style>
 </head>
 <body>
@@ -476,10 +565,26 @@
 			<div class="fruits-grid" id="fruits-container"></div>
 		</div>
 
+		<div id="tab-dico" class="tab-content">
+			<h3 style="text-align:left;margin-bottom:10px;font-size:1em;color:#666;border-bottom:2px solid #eee;padding-bottom:5px;">📚 Dictionnaire</h3>
+			<input type="text" id="dico-search" class="search-bar" placeholder="Rechercher (ex: Haki, Ponéglyphe...)" oninput="renderDico()">
+			<div class="dico-filters">
+				<button class="dico-filter-btn active-dico" data-cat="all"        onclick="setDicoFilter('all',this)">Tous</button>
+				<button class="dico-filter-btn" data-cat="Fluide"                 onclick="setDicoFilter('Fluide',this)">⚡ Fluide</button>
+				<button class="dico-filter-btn" data-cat="Factions"               onclick="setDicoFilter('Factions',this)">🏴‍☠️ Factions</button>
+				<button class="dico-filter-btn" data-cat="Géographie"             onclick="setDicoFilter('Géographie',this)">🗺️ Géo</button>
+				<button class="dico-filter-btn" data-cat="Lore"                   onclick="setDicoFilter('Lore',this)">📜 Lore</button>
+				<button class="dico-filter-btn" data-cat="Combat"                 onclick="setDicoFilter('Combat',this)">⚔️ Combat</button>
+				<button class="dico-filter-btn" data-cat="Divers"                 onclick="setDicoFilter('Divers',this)">🔧 Divers</button>
+			</div>
+			<div class="dico-list" id="dico-container"></div>
+		</div>
+
 		<div class="bottom-nav">
 			<button class="nav-btn active" onclick="switchTab('tab-suivi', this)">⛵ Progression</button>
 			<button class="nav-btn" onclick="switchTab('tab-pokedex', this)">📖 Pokédex</button>
 			<button class="nav-btn" onclick="switchTab('tab-fruits', this)">😈 Fruits</button>
+			<button class="nav-btn" onclick="switchTab('tab-dico', this)">📚 Dico</button>
 		</div>
     </div>
 
@@ -876,7 +981,7 @@
 				div.innerHTML = `
 					<div class="fruit-card-header">
 						<div>
-							<div class="fruit-name-fr">🍎 ${f.nameFr}</div>
+							<div class="fruit-name-fr">🍈​ ${f.nameFr}</div>
 							<div class="fruit-name-jp">${f.name}</div>
 						</div>
 						<span class="fruit-type-badge type-${f.type}">${f.type.replace('Zoan-Mythique','Zoan Mythique').replace('Zoan-Antique','Zoan Antique')}</span>
@@ -888,10 +993,580 @@
 			});
 		}
 
+		// --- DICTIONNAIRE ONE PIECE ---
+		const DICO = [
+			// ⚡ FLUIDE (HAKI)
+			{
+				term: "Fluide (Haki)",
+				cat: "Fluide",
+				def: "Force intérieure présente en chaque être vivant. Il en existe trois types. La plupart des gens ignorent même son existence. Les utilisateurs avancés peuvent en maîtriser plusieurs formes simultanément. Le Fluide est l'une des rares choses capable de contrer les pouvoirs des Logia."
+			},
+			{
+				term: "Fluide de l'Armement",
+				cat: "Fluide",
+				def: "Permet de durcir une partie de son corps ou une arme en la recouvrant d'une armure invisible noire. C'est le seul moyen de toucher physiquement les utilisateurs de fruits Logia. Sa forme avancée, le Ryou, permet de projeter le fluide à l'intérieur du corps de l'ennemi pour le détruire de l'intérieur sans le toucher directement."
+			},
+			{
+				term: "Fluide de l'Observation",
+				cat: "Fluide",
+				def: "Permet de sentir la présence, les émotions et les intentions des autres. À un niveau avancé (Kenbunshoku poussé), l'utilisateur peut entrevoir quelques instants dans le futur. Katakuri en est l'exemple le plus abouti dans la série."
+			},
+			{
+				term: "Fluide des Rois",
+				cat: "Fluide",
+				def: "Pouvoir extrêmement rare présent chez 1 personne sur plusieurs millions. Permet d'émettre une vague d'énergie pouvant assommer ou tuer les personnes à faible volonté dans un large rayon. Seuls ceux ayant « l'étoffe d'un roi » le possèdent. Luffy, Shanks, Kaido, Big Mom ou encore Zoro le maîtrisent."
+			},
+			{
+				term: "Fluide des Rois — Revêtement",
+				cat: "Fluide",
+				def: "Forme ultime du Fluide des Rois, découverte dans le Nouveau Monde. Permet de revêtir son corps ou ses attaques du Fluide des Rois, comme on le ferait avec le Fluide de l'Armement, pour infliger des dégâts cataclysmiques. Maîtrisé par Luffy, Kaido et Shanks notamment."
+			},
+			{
+				term: "Ryou",
+				cat: "Fluide",
+				def: "Nom donné au Pays de Wa à la technique avancée du Fluide de l'Armement. Consiste à faire circuler le Fluide à travers son corps pour le projeter à l'extérieur, endommageant l'ennemi sans contact direct. Enseigné à Luffy par Hyogoro le Fleur pendant l'arc Wano."
+			},
+			// 🏴‍☠️ FACTIONS
+			{
+				term: "Shichibukai",
+				cat: "Factions",
+				def: "Anciennement connu sous le nom de 'Sept Grands Corsaires'. Alliance de 7 pirates puissants travaillant sous la protection du Gouvernement Mondial en échange d'une immunité partielle. Le système a été aboli lors de l'arc Reverie, entraînant leur traque par la Marine."
+			},
+			{
+				term: "Yonko (Quatre Empereurs)",
+				cat: "Factions",
+				def: "Les quatre pirates les plus puissants du monde, régnant sur la seconde moitié de Grand Line (Nouveau Monde). Chacun dirige un immense territoire et un équipage redouté. Ont longtemps été Barbe Blanche, Kaido, Big Mom et Shanks. Luffy et Buggy en font désormais partie."
+			},
+			{
+				term: "Marine",
+				cat: "Factions",
+				def: "Force militaire navale du Gouvernement Mondial. Chargée de maintenir l'ordre sur les mers et de traquer les pirates. Ses grades vont de Simple Marin à Amiral en Chef. Les Amiraux sont ses combattants d'élite : Akainu, Aokiji et Kizaru en sont les exemples les plus connus."
+			},
+			{
+				term: "CP0 (Cipher Pol 0)",
+				cat: "Factions",
+				def: "L'agence secrète la plus puissante du Gouvernement Mondial. Contrairement aux autres Cipher Pol numérotés, le CP0 opère ouvertement et dispose d'une autorité quasi absolue. Ses agents sont parmi les combattants les plus redoutables du monde."
+			},
+			{
+				term: "CP9",
+				cat: "Factions",
+				def: "Unité secrète d'assassins au service du Gouvernement Mondial, révélée lors de l'arc Enies Lobby. Ses membres maîtrisent le Rokushiki, un style de combat surhumain. Rob Lucci en était l'agent le plus puissant."
+			},
+			{
+				term: "Armée Révolutionnaire",
+				cat: "Factions",
+				def: "Organisation fondée et dirigée par Dragon, le père de Luffy et l'homme le plus recherché du monde. Son objectif est de renverser le Gouvernement Mondial. Elle opère dans l'ombre depuis des décennies et possède des cellules dans de nombreux pays."
+			},
+			{
+				term: "Supernovas (Worst Generation)",
+				cat: "Factions",
+				def: "Surnom des 12 pirates rookies ayant une prime d'au moins 100 millions de berrys à leur arrivée à l'archipel de Sabaody. Inclut Luffy, Zoro, Law, Kid, Hawkins, Drake et d'autres. Ils représentent la nouvelle génération de pirates menaçant l'équilibre mondial."
+			},
+			{
+				term: "Gouvernement Mondial",
+				cat: "Factions",
+				def: "Alliance de 170 pays sous l'autorité des Cinq Doyens (Gorosei). Contrôle la Marine, les Cipher Pol et les Célestes Dragons. Préserve à tout prix les secrets du Siècle Oublié et détient l'autorité suprême sur la plupart du monde connu."
+			},
+			{
+				term: "Célestes Dragons (Tenryubito)",
+				cat: "Factions",
+				def: "Descendants des 20 familles royales qui ont fondé le Gouvernement Mondial il y a 800 ans. Ils vivent sur Marie Geoise, au sommet de la Red Line, et se considèrent comme des dieux. Intouchables par la loi ordinaire, ils portent des casques pour ne pas respirer le même air que les 'inférieurs'."
+			},
+			{
+				term: "Gorosei (Cinq Doyens)",
+				cat: "Factions",
+				def: "Les cinq hommes au sommet du Gouvernement Mondial. Leur identité réelle et leur véritable pouvoir ont longtemps été mystérieux. Révélés plus tard comme des entités d'une puissance terrifiante au service d'Imu."
+			},
+			{
+				term: "Imu",
+				cat: "Factions",
+				def: "Personnage mystérieux siégeant au-dessus des Cinq Doyens sur le Trône Vide. Représente la véritable autorité suprême du monde. Son existence est tenue secrète du monde entier. Son rôle dans l'histoire du monde est encore partiellement voilé."
+			},
+			// 🗺️ GÉOGRAPHIE
+			{
+				term: "Grand Line",
+				cat: "Géographie",
+				def: "Route maritime légendaire traversant le globe d'est en ouest, perpendiculairement à la Red Line. Considérée comme la mer la plus dangereuse du monde en raison de ses conditions météo imprévisibles et de la concentration de pirates et de créatures puissantes. Divisée en deux parties par Marie Geoise."
+			},
+			{
+				term: "Nouveau Monde",
+				cat: "Géographie",
+				def: "La seconde moitié de Grand Line, après Marie Geoise. Territoire dominé par les Yonko. Bien plus dangereuse que la première moitié, elle abrite des îles aux conditions extrêmes et des ennemis d'un niveau sans commune mesure avec ce qui précède."
+			},
+			{
+				term: "Red Line",
+				cat: "Géographie",
+				def: "Immense continent rocheux qui fait le tour du globe de façon verticale, divisant les mers en Est et Ouest. C'est le seul endroit où Grand Line est traversée. Marie Geoise, la capitale du Gouvernement Mondial, se trouve à son sommet."
+			},
+			{
+				term: "Calm Belt",
+				cat: "Géographie",
+				def: "Zone maritime de part et d'autre de Grand Line, caractérisée par une absence totale de vents et de courants. Elle est infestée de Rois des Mers géants, rendant la traversée quasiment impossible sans propulsion sous-marine. La Marine l'utilise comme voie secrète."
+			},
+			{
+				term: "Marie Geoise",
+				cat: "Géographie",
+				def: "Capitale mondiale du Gouvernement Mondial, perchée au sommet de la Red Line. Lieu de résidence des Célestes Dragons. Abrite le Trône Vide et les secrets les plus profonds du monde. Seuls les rois des nations alliées peuvent y accéder lors des Reveries."
+			},
+			{
+				term: "Laugh Tale",
+				cat: "Géographie",
+				def: "La dernière île de Grand Line, inaccessible sans les quatre Road Ponéglyphes. C'est là que Gold Roger a découvert le One Piece et la vérité sur l'histoire du monde. Le nom vient du fait que Roger et son équipage ont ri en apprenant ce qu'ils y ont trouvé."
+			},
+			{
+				term: "Reverie (Conseil des Rois)",
+				cat: "Géographie",
+				def: "Réunion organisée tous les quatre ans à Marie Geoise, rassemblant les souverains des nations alliées au Gouvernement Mondial. Lors de la dernière Reverie, des décisions majeures ont été prises, notamment l'abolition du système Shichibukai."
+			},
+			// 📜 LORE
+			{
+				term: "Siècle Oublié",
+				cat: "Lore",
+				def: "Période de 100 ans effacée de l'histoire officielle par le Gouvernement Mondial. Les événements de cette époque sont la clé de la véritable histoire du monde. Seuls les Ponéglyphes et les archéologues d'Ohara en connaissaient des fragments. Le Gouvernement interdit toute recherche sur ce sujet sous peine de mort."
+			},
+			{
+				term: "Ponéglyphe",
+				cat: "Lore",
+				def: "Grandes pierres indestructibles gravées en un alphabet ancien, seule trace du Siècle Oublié. Il en existe plusieurs types : les Ponéglyphes historiques (bleus), les Ponéglyphes de localisation (rouges, appelés Road Ponéglyphes). Seule Nico Robin peut les lire dans la série."
+			},
+			{
+				term: "Road Ponéglyphes",
+				cat: "Lore",
+				def: "Les quatre Ponéglyphes rouges les plus importants. En combinant les informations des quatre, on peut localiser Laugh Tale, l'île du One Piece. Ils étaient détenus par les quatre Yonko (Big Mom, Kaido, Barbe Blanche et Shanks)."
+			},
+			{
+				term: "Armes Antiques",
+				cat: "Lore",
+				def: "Trois armes légendaires d'une puissance de destruction massive datant du Siècle Oublié. Pluton : un navire de guerre surpuissant. Poséidon : un être vivant capable de commander les Rois des Mers (Shirahoshi). Uranus : encore inconnue. Le Gouvernement les recherche pour conserver son pouvoir."
+			},
+			{
+				term: "Joy Boy",
+				cat: "Lore",
+				def: "Personnage légendaire du Siècle Oublié ayant laissé un message d'excuses sur un Ponéglyphe à Fish-Man Island. Il avait fait une promesse à Poséidon qu'il n'a pas pu tenir. Vegapunk révèle que Luffy est en réalité la réincarnation de Joy Boy, attendue depuis 800 ans."
+			},
+			{
+				term: "One Piece",
+				cat: "Lore",
+				def: "Le trésor légendaire laissé par Gold Roger à Laugh Tale, la dernière île de Grand Line. Sa nature exacte reste un mystère pour le lecteur. Roger a dit qu'il attendait quelqu'un pour le trouver. Ce trésor est la motivation principale de Luffy et de nombreux pirates de la série."
+			},
+			{
+				term: "Will du D.",
+				cat: "Lore",
+				def: "Mystérieux héritage porté par certains personnages dont le nom contient la lettre D (Monkey D. Luffy, Portgas D. Ace, Marshall D. Teach, Trafalgar D. Water Law...). Les Célestes Dragons les appellent 'ennemis naturels des dieux'. Sa signification profonde est encore partiellement révélée."
+			},
+			{
+				term: "Ohara",
+				cat: "Lore",
+				def: "Île d'archéologues détruite par le Gouvernement Mondial (Buster Call) pour avoir tenté de déchiffrer l'histoire du Siècle Oublié. C'est l'île natale de Nico Robin. L'arbre de la bibliothèque d'Ohara et les connaissances de ses chercheurs ont survécu en partie grâce à Robin."
+			},
+			{
+				term: "Buster Call",
+				cat: "Lore",
+				def: "Ordre militaire d'extermination totale émis par les plus hauts gradés de la Marine. Mobilise 10 navires de guerre et 5 vice-amiraux pour détruire une cible. Un des actes les plus extrêmes du Gouvernement. Utilisé contre Ohara et tenté contre Enies Lobby."
+			},
+			{
+				term: "Fruit du Démon (origine)",
+				cat: "Lore",
+				def: "Révélé par Vegapunk : les fruits du démon sont des manifestations des désirs et rêves de l'humanité, incarnés dans des fruits. Ils sont liés à une 'mer de vie' invisible. Manger un fruit rend l'utilisateur 'étranger à la mer', d'où la malédiction de ne plus pouvoir nager."
+			},
+			// ⚔️ COMBAT
+			{
+				term: "Rokushiki",
+				cat: "Combat",
+				def: "Style de combat surhumain à six techniques maîtrisé par les agents des Cipher Pol. Comprend : Geppo (marcher dans les airs), Soru (déplacement ultra-rapide), Tekkai (corps dur comme l'acier), Shigan (doigt-pistolet), Rankyaku (coup de pied tranchant), Kami-e (corps souple comme du papier). Rob Lucci en maîtrisait une 7ème forme secrète."
+			},
+			{
+				term: "Gear (Luffy)",
+				cat: "Combat",
+				def: "Transformations développées par Luffy pour décupler sa puissance. Gear 2 : accélère la circulation sanguine pour booster la vitesse. Gear 3 : gonfle les os. Gear 4 : revêtement de Fluide combiné à l'élasticité (Boundman, Tankman, Snakeman). Gear 5 : forme ultime liée au réveil du Hito Hito no Mi modèle Nika."
+			},
+			{
+				term: "Ittoryu / Santoryu / Nitoryu",
+				cat: "Combat",
+				def: "Styles de combat au sabre de Zoro. Ittoryu = un sabre. Nitoryu = deux sabres. Santoryu = trois sabres (deux en main, un en bouche). Son style ultime vise l'Ittoryu le plus puissant possible, incarné par la technique Enma et les techniques de niveau Yama."
+			},
+			{
+				term: "Diable Jambe / Black Leg",
+				cat: "Combat",
+				def: "Style de combat de Sanji basé exclusivement sur les jambes. Le Diable Jambe lui permet d'enflammer ses jambes par friction. Le Raid Suit des Vinsmoke lui a révélé des capacités cachées. Plus tard, Sanji développe l'Ifrit Jambe, une version bien plus puissante de sa flamme."
+			},
+			{
+				term: "Conqueror's Haki (revêtement)",
+				cat: "Combat",
+				def: "Technique rarissime consistant à envelopper ses attaques du Fluide des Rois, à la façon du Fluide de l'Armement. Visible sous forme d'éclairs noirs autour du corps ou de l'arme. Maîtrisée par Luffy, Shanks et Kaido. Considérée comme la marque absolue d'un combattant au niveau d'un roi."
+			},
+			{
+				term: "Éveil (Fruit du Démon)",
+				cat: "Combat",
+				def: "Stade ultime de maîtrise d'un fruit du démon. Pour un Paramecia, le pouvoir s'étend à l'environnement (Law, Luffy en Gear 5, Doflamingo). Pour un Zoan, l'utilisateur gagne en force, vitesse et régénération extrêmes. Pour un Logia, les effets sont encore inconnus officiellement."
+			},
+			// 🔧 DIVERS
+			{
+				term: "Seastone (Pierre de Mer / Granit Marin)",
+				cat: "Divers",
+				def: "Minéral naturel émettant la même énergie que la mer. Annule les pouvoirs des utilisateurs de fruits du démon au contact. Originaire du Pays de Wa. La Marine l'utilise pour fabriquer des menottes, des cages et équiper certains navires. Extrêmement précieux et difficile à trouver."
+			},
+			{
+				term: "Soru",
+				cat: "Divers",
+				def: "Technique du Rokushiki permettant de se déplacer à une vitesse si grande qu'on devient invisible à l'œil nu. L'utilisateur repousse le sol dix fois de suite en un instant pour bondir à toute vitesse. Largement utilisée par les agents CP9."
+			},
+			{
+				term: "Berrys (฿)",
+				cat: "Divers",
+				def: "Monnaie officielle du monde de One Piece. Les primes des pirates sont exprimées en berrys. Une prime de 1 milliard est considérée comme le seuil des personnages d'élite. Luffy dépasse les 3 milliards après Wano."
+			},
+			{
+				term: "Prime (Bounty)",
+				cat: "Divers",
+				def: "Récompense mise à prix par le Gouvernement Mondial sur la tête d'un pirate ou d'un criminel. Elle reflète le niveau de menace estimé par la Marine. Elle augmente avec les exploits du criminel. Être une 'tête mise à prix' est paradoxalement un symbole de prestige dans le monde des pirates."
+			},
+			{
+				term: "Rois des Mers (Sea Kings)",
+				cat: "Divers",
+				def: "Créatures marines colossales vivant dans le Calm Belt. Leur taille peut dépasser celle des îles. Pratiquement indestructibles, ils rendent la traversée du Calm Belt impossible pour un navire ordinaire. Shirahoshi (Poséidon) peut les contrôler par sa voix."
+			},
+			{
+				term: "Transponder Snail (Escargophone)",
+				cat: "Divers",
+				def: "Créature marine utilisée comme système de communication dans le monde de One Piece. Selon leur taille et leur couleur, ils servent à la téléphonie, à la vidéo-surveillance ou aux communications militaires. Le Den Den Mushi est leur nom japonais."
+			},
+			{
+				term: "Log Pose",
+				cat: "Divers",
+				def: "Boussole indispensable pour naviguer sur Grand Line. Au lieu du nord magnétique, elle pointe vers le champ magnétique de l'île suivante. Elle met un certain temps à s'enregistrer sur chaque île. Remplacée par l'Eternal Pose (fixé sur une île précise) ou le New World Log Pose (trois aiguilles) dans le Nouveau Monde."
+			},
+			{
+				term: "SMILE",
+				cat: "Divers",
+				def: "Fruits du démon artificiels de type Zoan créés par César Clown à partir de recherches de Vegapunk, en utilisant le SAD. Seuls 10% fonctionnent réellement. Les 90% défectueux condamnent leur consommateur à rire constamment, incapable d'exprimer d'autres émotions. Vendus à Kaido par Doflamingo."
+			},
+			{
+				term: "SAD",
+				cat: "Divers",
+				def: "Substance produite exclusivement par César Clown sur Punk Hazard, indispensable à la fabrication des SMILE. Sa destruction par Luffy et Law lors de l'arc Punk Hazard a mis fin à l'approvisionnement de Kaido en SMILE, déclenchant une guerre de factions."
+			},
+			{
+				term: "Ponéglyphe d'Excuse (Fish-Man Island)",
+				cat: "Divers",
+				def: "Ponéglyphe trouvé à Fish-Man Island contenant un message de Joy Boy adressé à la sirène Poséidon de l'époque, s'excusant de ne pas avoir pu tenir sa promesse. Premier indice concret sur l'identité et le passé de Joy Boy découvert dans la série."
+			},
+			// ⚡ FLUIDE (suite)
+			{
+				term: "Mantra",
+				cat: "Fluide",
+				def: "Nom donné au Fluide de l'Observation sur l'île céleste de Skypiea. Enel en avait une maîtrise exceptionnelle, lui permettant d'entendre et de sentir tout ce qui se passait sur Skypiea simultanément, combiné à ses pouvoirs de la foudre."
+			},
+			{
+				term: "Fluide Suprême",
+				cat: "Fluide",
+				def: "Terme parfois utilisé pour désigner le Fluide des Rois dans sa forme la plus pure. Seul 1 être sur plusieurs millions en est naturellement doté. Son émission involontaire peut assommer des centaines de personnes autour de l'utilisateur, comme Luffy l'a fait à plusieurs reprises sans le vouloir."
+			},
+			{
+				term: "Kenbunshoku avancé",
+				cat: "Fluide",
+				def: "Forme poussée du Fluide de l'Observation permettant d'entrevoir l'avenir immédiat. Katakuri est le personnage le plus connu à le maîtriser, lui permettant d'éviter presque toute attaque. Luffy l'acquiert partiellement lors de son combat contre Katakuri à Whole Cake Island."
+			},
+
+			// 🏴‍☠️ FACTIONS (suite)
+			{
+				term: "Baroque Works",
+				cat: "Factions",
+				def: "Organisation criminelle secrète fondée et dirigée en secret par Crocodile (Mr. 0), l'un des Shichibukai. Ses agents portaient des noms de nombres et de jours fériés. Elle visait à déstabiliser le royaume d'Alabasta pour permettre à Crocodile de s'en emparer. Démantelée par Luffy et son équipage."
+			},
+			{
+				term: "L'Équipage aux Cent Bêtes",
+				cat: "Factions",
+				def: "Armée pirate colossale dirigée par Kaido, l'un des Yonko. Comptait des dizaines de milliers de membres dont 500 utilisateurs de SMILE fonctionnels et de nombreux utilisateurs de fruits naturels. Basé au Pays de Wa. Vaincu lors de la Bataille d'Onigashima."
+			},
+			{
+				term: "Big Mom Pirates",
+				cat: "Factions",
+				def: "Équipage de Charlotte Linlin (Big Mom), l'une des Yonko. Basé sur Whole Cake Island. Composé en grande partie de ses enfants (elle en a 85). Contrôle un vaste empire fondé sur des mariages arrangés avec d'autres familles puissantes pour agrandir son alliance."
+			},
+			{
+				term: "L'Équipage de Roger",
+				cat: "Factions",
+				def: "Le seul équipage à avoir atteint Laugh Tale et fait le tour du monde. Dirigé par Gol D. Roger, avec notamment Rayleigh comme second, Scopper Gaban et Oden Kozuki. Ils ont découvert la véritable histoire du monde et le secret du One Piece."
+			},
+			{
+				term: "Cross Guild",
+				cat: "Factions",
+				def: "Organisation fondée par Crocodile et Mihawk après l'abolition des Shichibukai, rejointe ensuite par Buggy qui en devient le figure de proue involontaire. Spécialisée dans la pose de primes sur des membres de la Marine, inversant le rapport de force habituel."
+			},
+			{
+				term: "L'Équipage de Barbe Noire",
+				cat: "Factions",
+				def: "Équipage de Marshall D. Teach, l'un des Yonko. Unique utilisateur de deux fruits du démon simultanément. A recruté des criminels évadés des prisons les plus sécurisées. Considéré comme la menace montante la plus dangereuse de la fin de la série."
+			},
+			{
+				term: "Clan de Vinsmoke",
+				cat: "Factions",
+				def: "Famille royale déchue dirigeant l'armée mercenaire Germa 66. Les enfants de Judge Vinsmoke ont été génétiquement modifiés pour être des super-soldats sans empathie. Sanji est le seul à avoir conservé ses émotions, ce que son père considérait comme une faiblesse."
+			},
+
+			// 🗺️ GÉOGRAPHIE (suite)
+			{
+				term: "Fish-Man Island",
+				cat: "Géographie",
+				def: "Île sous-marine à 10 000 mètres de profondeur, seule façon de traverser la Red Line par le bas. Peuplée de poissons-hommes et de sirènes. Passage obligatoire pour entrer dans le Nouveau Monde. Gouvernée par le roi Neptune et sa famille."
+			},
+			{
+				term: "Skypiea",
+				cat: "Géographie",
+				def: "Île flottante dans les nuages, accessible depuis la mer via un Knock Up Stream. Peuplée de Skypiéens et de Shandiens. Dirigée par Enel avant sa défaite par Luffy. Possède ses propres règles, sa propre culture et son propre système d'imposition de l'accès."
+			},
+			{
+				term: "Punk Hazard",
+				cat: "Géographie",
+				def: "Île abandonnée divisée en deux zones : une moitié en feu et une moitié gelée, résultat d'un ancien combat entre Akainu et Aokiji. Utilisée comme laboratoire secret par César Clown pour le compte de Doflamingo. Point de départ de l'alliance Luffy-Law."
+			},
+			{
+				term: "Dressrosa",
+				cat: "Géographie",
+				def: "Royaume méditerranéen gouverné en secret par Doflamingo après avoir renversé la famille Riku. Connue pour ses corridas et ses jouets (en réalité des humains transformés). Libérée par Luffy lors de l'un des arcs les plus longs et importants de la série."
+			},
+			{
+				term: "Pays de Wa (Wano Kuni)",
+				cat: "Géographie",
+				def: "Nation insulaire coupée du reste du monde depuis des siècles, avec une culture inspirée du Japon féodal. Gouvernée de force par Orochi et Kaido. Patrie des samouraïs et des forgerons de sabres légendaires. Lieu de la bataille finale contre Kaido."
+			},
+			{
+				term: "Sabaody Archipelago",
+				cat: "Géographie",
+				def: "Archipel de bulles géantes situé juste avant Fish-Man Island. Dernière escale avant l'entrée dans le Nouveau Monde. Point de rassemblement des 11 Supernovas. Lieu de la cuisante défaite de l'équipage de Chapeau de Paille face à Kizaru et Kuma."
+			},
+			{
+				term: "Impel Down",
+				cat: "Géographie",
+				def: "Prison sous-marine du Gouvernement Mondial, considérée comme imprenable. Divisée en 6 niveaux de plus en plus terrifiants selon la dangerosité des prisonniers. Le niveau 6 contient les criminels les plus redoutables du monde. Franchie par Luffy pour sauver Ace."
+			},
+			{
+				term: "Enies Lobby",
+				cat: "Géographie",
+				def: "Île judiciaire du Gouvernement Mondial, symbole de la justice implacable. Décrite comme étant toujours en plein jour. Protégée en permanence par 10 000 soldats et directement reliée à Impel Down et Marine Ford. Attaquée par l'équipage de Chapeau de Paille pour sauver Robin."
+			},
+			{
+				term: "Marine Ford",
+				cat: "Géographie",
+				def: "Ancienne base centrale de la Marine et lieu de la plus grande bataille de l'ère moderne : la Guerre au Sommet. C'est là qu'Ace a été exécuté et que Barbe Blanche est mort. L'événement a marqué la fin d'une ère et le début d'une nouvelle."
+			},
+			{
+				term: "Egghead",
+				cat: "Géographie",
+				def: "Île laboratoire futuriste de Vegapunk, semblant sortie du futur avec plusieurs siècles d'avance technologique sur le reste du monde. Île déterminante pour les révélations sur les fruits du démon, l'origine du monde et les secrets du Gouvernement Mondial."
+			},
+
+			// 📜 LORE (suite)
+			{
+				term: "Vegapunk",
+				cat: "Lore",
+				def: "Le plus grand génie scientifique du monde de One Piece. Travaillait pour la Marine mais gardait ses propres agendas. A créé les Pacifistas, les Seraphim, étudié les fruits du démon et leurs origines, et révélé des vérités fondamentales sur le monde avant sa mort programmée."
+			},
+			{
+				term: "Pacifista",
+				cat: "Lore",
+				def: "Cyborgs de guerre fabriqués par Vegapunk à partir d'humains modifiés, dotés de rayons lasers identiques à ceux de Kizaru. Modèle de base inspiré de Bartholomew Kuma. Remplacés plus tard par les Seraphim, bien plus puissants."
+			},
+			{
+				term: "Seraphim",
+				cat: "Lore",
+				def: "Nouvelle génération d'armes biologiques créées par Vegapunk. Clones d'anciens Shichibukai enfants, dotés de sang lunaire (Lunarian) leur conférant une résistance et une puissance extrêmes, en plus des pouvoirs de fruits du démon. Considérés comme les êtres les plus puissants créés par l'homme."
+			},
+			{
+				term: "Lunaires (Lunarians)",
+				cat: "Lore",
+				def: "Race quasi-éteinte originaire de la montagne sacrée de la Red Line, considérée comme des dieux dans la mythologie. Capables de générer du feu depuis leur dos. Seuls survivants connus : King (de l'équipage de Kaido) et les Seraphim qui ont leur sang. Le Gouvernement voulait les exterminer."
+			},
+			{
+				term: "Poséidon",
+				cat: "Lore",
+				def: "L'une des trois Armes Antiques. Il s'agit d'une sirène née une fois par plusieurs siècles, capable de parler aux Rois des Mers et de les commander. À l'époque de la série, c'est la princesse Shirahoshi de Fish-Man Island. Joy Boy avait établi un pacte avec l'ancienne Poséidon."
+			},
+			{
+				term: "Pluton",
+				cat: "Lore",
+				def: "L'une des trois Armes Antiques. Un navire de guerre d'une puissance cataclysmique capable de détruire des îles entières. Les plans de Pluton étaient cachés à Alabasta puis confiés à Franky qui les a brûlés. Le navire lui-même est enfoui quelque part au Pays de Wa."
+			},
+			{
+				term: "D. (La Volonté du D.)",
+				cat: "Lore",
+				def: "Initiale mystérieuse portée par certains personnages clés : Luffy, Ace, Dragon, Garp, Roger, Law, Blackbeard, Jaguar D. Saul... Les Célestes Dragons les appellent 'ennemis naturels des dieux'. Ils semblent tous partager une volonté inébranlable et un destin lié à l'histoire du monde."
+			},
+			{
+				term: "Siècle Oublié — Vérité",
+				cat: "Lore",
+				def: "Révélé partiellement : il y a 800 ans, 20 royaumes ont formé le Gouvernement Mondial en combattant l'Ancien Royaume. Cet Ancien Royaume a été effacé de l'histoire. Joy Boy en était une figure centrale. Les Ponéglyphes ont été créés par cet Ancien Royaume pour préserver la vérité malgré la censure."
+			},
+			{
+				term: "Oden Kozuki",
+				cat: "Lore",
+				def: "Daimyo légendaire du Pays de Wa, membre de l'équipage de Barbe Blanche puis de Roger. Il a vu Laugh Tale et connaissait la vérité sur Joy Boy. Exécuté par Kaido et Orochi. Ses journaux, lus par sa fille Hiyori et Momonosuke, ont guidé la résistance de Wano."
+			},
+			{
+				term: "Haki des Grands Personnages",
+				cat: "Lore",
+				def: "Concept informel désignant la façon dont les personnages les plus puissants de l'histoire ont tous démontré une volonté extraordinaire. Roger, Barbe Blanche, Rayleigh, Garp : tous ont atteint des sommets sans forcément avoir mangé de fruit du démon, uniquement par la maîtrise du Fluide."
+			},
+
+			// ⚔️ COMBAT (suite)
+			{
+				term: "Haki de Couleur (Busoushoku)",
+				cat: "Combat",
+				def: "Terme alternatif pour le Fluide de l'Armement. Lorsqu'il est activé, la zone revêtue prend une teinte noire caractéristique, comme de la laque. Cette couleur noire est la marque visuelle la plus reconnaissable du Fluide de l'Armement avancé."
+			},
+			{
+				term: "Ryuma",
+				cat: "Combat",
+				def: "Légendaire samouraï du Pays de Wa, surnommé le Dieu du Sabre, mort depuis longtemps. Son cadavre a été animé par Moria dans Thriller Bark. Il détenait Shusui, l'un des sabres de grade suprême. Zoro le bat et récupère Shusui, qu'il rendra plus tard à Wano."
+			},
+			{
+				term: "Sabres de Grade (O Wazamono)",
+				cat: "Combat",
+				def: "Classement des sabres selon leur qualité de forge. Du plus courant au plus rare : Grade, O Wazamono (21 sabres), Ryo Wazamono (12 sabres), et Saijo O Wazamono (12 sabres suprêmes). Parmi ces derniers : Enma, Yoru (de Mihawk), et Murakumogiri (de Barbe Blanche)."
+			},
+			{
+				term: "Enma",
+				cat: "Combat",
+				def: "L'un des sabres de grade suprême, forgé par Shimotsuki Kozaburo. Il draine le Fluide de son utilisateur involontairement, le rendant extrêmement difficile à manier. Jadis porté par Oden Kozuki. Offert à Zoro par Hiyori en échange de Shusui lors de l'arc Wano."
+			},
+			{
+				term: "Diable Jambe Ifrit",
+				cat: "Combat",
+				def: "Forme ultime du Diable Jambe de Sanji, développée lors de Wano. Combine ses capacités génétiques Vinsmoke (exosquelette activé) avec sa flamme, créant une chaleur bien supérieure à toutes ses attaques précédentes. Permet à Sanji de rivaliser avec des adversaires de tout premier plan."
+			},
+			{
+				term: "Téchnique du Point de Vue (Kokuto)",
+				cat: "Combat",
+				def: "Style de combat de Brook basé sur des attaques si rapides qu'elles semblent n'avoir jamais eu lieu. Combiné aux pouvoirs de son fruit (âme, glace), Brook est capable de geler ses adversaires ou de les affecter spirituellement au-delà du physique."
+			},
+
+			// 🔧 DIVERS (suite)
+			{
+				term: "Vivre Card (Carte de Vie)",
+				cat: "Divers",
+				def: "Petit morceau de papier fait à partir d'un fragment d'ongle d'une personne. Toujours orienté vers cette personne et se consume si elle est en danger ou mourant. Utilisée pour localiser des alliés en mer. Shanks en a donné une à Luffy, Ace en avait une de Luffy."
+			},
+			{
+				term: "Den Den Mushi",
+				cat: "Divers",
+				def: "Escargot-téléphone utilisé pour les communications dans tout le monde de One Piece. Il en existe plusieurs variétés : petit (appel), grand (diffusion à grande échelle), noir (appels non traçables utilisés par les criminels), blanc (coupe les communications), doré (CP uniquement)."
+			},
+			{
+				term: "Eternal Pose",
+				cat: "Divers",
+				def: "Version spéciale du Log Pose aimantée en permanence sur une île précise, sans avoir besoin de se recalibrer. Très précieux car il permet de retourner n'importe quand sur une île déjà visitée. Utilisé notamment par Baroque Works pour naviguer vers Alabasta."
+			},
+			{
+				term: "Coup de Vent / Knock Up Stream",
+				cat: "Divers",
+				def: "Phénomène naturel de Grand Line consistant en un geyser d'eau jaillissant des profondeurs marines avec une force colossale. Utilisé par l'équipage de Chapeau de Paille pour atteindre Skypiea en propulsant le Merry dans les nuages."
+			},
+			{
+				term: "Coup de Burst / Gaon Cannon",
+				cat: "Divers",
+				def: "Canon surpuissant intégré au Sunny Go, le second navire de l'équipage de Chapeau de Paille. Construit par Franky. Capable de propulser le navire en arrière à grande vitesse via le Coup de Burst, ou de tirer un boulet devastateur vers l'avant."
+			},
+			{
+				term: "Thousand Sunny",
+				cat: "Divers",
+				def: "Second navire de l'équipage de Chapeau de Paille, construit par Franky à Water Seven avec du bois d'Adam. Remplace le Going Merry après sa destruction à Enies Lobby. Équipé de nombreux gadgets dont le Coup de Burst, le Gaon Cannon et le Mini Merry II."
+			},
+			{
+				term: "Going Merry",
+				cat: "Divers",
+				def: "Premier navire de l'équipage de Chapeau de Paille, offert par Kaya à Usopp. Caravellle à tête de mouton. A développé une âme propre (Klabautermann) grâce à l'amour de son équipage. Détruit irrémédiablement à Enies Lobby, il reçoit des funérailles marines émouvantes."
+			},
+			{
+				term: "Buster Call — Déclenchement",
+				cat: "Divers",
+				def: "Peut uniquement être déclenché par un Amiral ou plus haut. Spandam en possédait le bouton par erreur, qu'il a utilisé contre Enies Lobby lors de l'arc du même nom, provoquant une catastrophe pour le Gouvernement. Une fois déclenché, il est impossible à arrêter."
+			},
+			{
+				term: "Reverie",
+				cat: "Divers",
+				def: "Sommet mondial organisé tous les 4 ans à Marie Geoise réunissant les souverains des royaumes alliés. Des décisions historiques y sont prises. La dernière Reverie a abouti à l'abolition des Shichibukai et au lancement de l'opération secrète d'Imu visant à détruire certains royaumes."
+			},
+			{
+				term: "Davy Back Fight",
+				cat: "Divers",
+				def: "Jeu traditionnel pirate entre deux équipages. Les équipages s'affrontent dans une série d'épreuves et le perdant doit céder un membre de son équipage au vainqueur. Pratiqué notamment par les pirates Long Ring Long Land de Foxy lors de l'arc du même nom."
+			},
+			{
+				term: "Kuja",
+				cat: "Divers",
+				def: "Tribu de guerrières vivant sur Amazon Lily, île interdite aux hommes. Toutes sont des utilisatrices de Fluide naturelles, ce qui en fait des combattantes redoutables. Dirigées par les trois sœurs Boa (Hancock, Sandersonia, Marigold). Hancock était l'une des Shichibukai."
+			},
+			{
+				term: "Mink (Peuple Mink)",
+				cat: "Divers",
+				def: "Race mi-humaine mi-animale vivant sur l'île de Zou, sur le dos d'un éléphant géant nommé Zunesha. Tous les Minks sont naturellement capables d'utiliser le Sulong, une transformation sous la pleine lune qui décuple leurs capacités au prix de leur épuisement rapide."
+			},
+			{
+				term: "Sulong",
+				cat: "Divers",
+				def: "Transformation des Minks sous la pleine lune. Leur fourrure blanchit, leurs yeux deviennent rouges et leurs capacités physiques sont multipliées de façon spectaculaire. Intenable longtemps car elle épuise l'utilisateur jusqu'à la mort si trop prolongée. Pedro et Carrot en font la démonstration lors de Whole Cake Island."
+			},
+			{
+				term: "Zunesha",
+				cat: "Divers",
+				def: "Éléphant géant marchant dans l'océan depuis des millénaires comme punition pour un crime commis il y a 800 ans. L'île de Zou est construite sur son dos. Il ne peut agir que sur ordre de quelqu'un portant le Will du D., comme Momonosuke qui lui a donné l'ordre de combattre à Wano."
+			},
+		];
+
+		let currentDicoFilter = 'all';
+
+		function setDicoFilter(cat, btn) {
+			currentDicoFilter = cat;
+			document.querySelectorAll('.dico-filter-btn').forEach(b => b.classList.remove('active-dico'));
+			btn.classList.add('active-dico');
+			renderDico();
+		}
+
+		function toggleDico(card) {
+			const def   = card.querySelector('.dico-def');
+			const arrow = card.querySelector('.dico-arrow');
+			def.classList.toggle('open');
+			arrow.classList.toggle('open');
+		}
+
+		function renderDico() {
+			const search = document.getElementById('dico-search').value.toLowerCase();
+			const container = document.getElementById('dico-container');
+			container.innerHTML = '';
+
+			const filtered = DICO.filter(d => {
+				const matchCat  = currentDicoFilter === 'all' || d.cat === currentDicoFilter;
+				const matchText = d.term.toLowerCase().includes(search) || d.def.toLowerCase().includes(search);
+				return matchCat && matchText;
+			});
+
+			if (filtered.length === 0) {
+				container.innerHTML = '<p style="color:#888;font-size:0.9em;text-align:center;">Aucun terme trouvé 📖</p>';
+				return;
+			}
+
+			filtered.forEach(d => {
+				const div = document.createElement('div');
+				div.className = 'dico-card';
+				div.onclick = () => toggleDico(div);
+				div.innerHTML = `
+					<div class="dico-card-header">
+						<span class="dico-term">${d.term}</span>
+						<span class="dico-cat-badge cat-${d.cat}">${d.cat}</span>
+						<span class="dico-arrow">▼</span>
+					</div>
+					<div class="dico-def">${d.def}</div>
+				`;
+				container.appendChild(div);
+			});
+		}
+
         // --- INITIALISATION ---
         fetchProgress();
 		loadPokedex();
 		renderFruits();
+		renderDico();
     </script>
 </body>
 </html>
