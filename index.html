@@ -27,7 +27,8 @@
             max-width: 350px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             text-align: center;
-            border-top: 5px solid #E3000F; /* Ligne rouge Luffy en haut */
+            /*border-top: 5px solid #E3000F; Ligne rouge Luffy en haut*/
+			padding-bottom: 80px;
         }
         
         h1 { 
@@ -173,13 +174,20 @@
 
 		/* --- MENU DU BAS (Navigation) --- */
 		.bottom-nav {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
 			display: grid;
-			grid-template-columns: repeat(4, 1fr); /* 4 colonnes égales */
+			grid-template-columns: repeat(4, 1fr);
 			width: 100%;
-			margin-top: 20px;
+			background: #ffffff;
 			border-top: 2px solid #eee;
 			padding: 8px 0;
+			padding-bottom: env(safe-area-inset-bottom); /* iPhone notch */
 			gap: 2px;
+			z-index: 999;
+			box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
 		}
 
 		.nav-btn {
