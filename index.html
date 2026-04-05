@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>One Pace Tracker</title>
-    <!--<link rel="icon" type="image/jpeg" href="logo.jpg">-->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<link rel="icon" type="image/png" href="https://custom-progress-bar.com/cdn/images/205/one-piece-luffy-straw-hat-custom-progress-bar-m.png">
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
 		/* Thème Clair - One Piece */
         body {
@@ -129,7 +129,7 @@
 			vertical-align: middle;
 		}
 		.badge-kai {
-			background-color: #8e44ad; /* Violet Anime-Sama */
+			background-color: #726f74; /* Violet Anime-Sama */
 		}
 
 		/* --- Nouveaux styles pour le groupe de boutons --- */
@@ -327,8 +327,8 @@
                 }
 
 				let badgeHTML = '';
-				if (arc.source === "Kai") {
-					badgeHTML = `<span class="badge badge-kai">Anime-Sama</span>`;
+				if (arc.version === "en") {
+					badgeHTML = `<span class="badge badge-kai">no fr</span>`;
 				}
 
 				div.innerHTML = `
