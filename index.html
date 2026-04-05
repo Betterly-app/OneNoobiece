@@ -489,21 +489,38 @@
 			color: #3A3A3C;
 		}
 
+		.modal-img {
+			width: 100%;
+			height: 220px;
+			object-fit: contain;
+			background: #E5E5EA; /* Fond gris iOS en attendant le chargement */
+			border-radius: 14px;
+			margin-bottom: 16px;
+			display: none; /* Cachée par défaut pour ne pas prendre de place vide */
+		}
+
 		/* ===== NAV DU BAS ===== */
 		.bottom-nav {
 			position: fixed;
-			bottom: 0;
-			left: 0;
-			right: 0;
+			bottom: 0; left: 0; right: 0;
 			display: grid;
-			grid-template-columns: repeat(4, 1fr);
+			grid-template-columns: repeat(7, 1fr);
 			background: rgba(249,249,249,0.92);
 			backdrop-filter: blur(20px);
 			-webkit-backdrop-filter: blur(20px);
 			border-top: 0.5px solid #D1D1D6;
-			padding: 10px 0 calc(env(safe-area-inset-bottom) + 8px);
+			padding: 8px 0 calc(env(safe-area-inset-bottom) + 8px);
 			z-index: 999;
 		}
+		.nav-btn:nth-child(1)::before { content: "⛵"; }
+		.nav-btn:nth-child(2)::before { content: "👤"; }
+		.nav-btn:nth-child(3)::before { content: "😈"; }
+		.nav-btn:nth-child(4)::before { content: "📚"; }
+		.nav-btn:nth-child(5)::before { content: "💰"; }
+		.nav-btn:nth-child(6)::before { content: "📅"; }
+		.nav-btn:nth-child(7)::before { content: "🏝️"; }
+		.nav-btn { font-size: 9px; }
+		.nav-btn::before { font-size: 18px; }
 
 		.nav-btn {
 			background: none;
@@ -537,6 +554,210 @@
 
 		/* ===== SCROLLBARS ===== */
 		::-webkit-scrollbar { width: 0; }
+
+		/* PRIMES */
+		.primes-list {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			max-height: calc(100vh - 220px);
+			overflow-y: auto;
+			background: #fff;
+			border-radius: 16px;
+		}
+		.prime-card {
+			background: #fff;
+			border: none;
+			border-radius: 0;
+			padding: 11px 14px;
+			border-bottom: 0.5px solid #F2F2F7;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.prime-card:first-child { border-radius: 16px 16px 0 0; }
+		.prime-card:last-child  { border-radius: 0 0 16px 16px; border-bottom: none; }
+		.prime-rank {
+			font-size: 12px;
+			font-weight: 700;
+			color: #C7C7CC;
+			min-width: 22px;
+			text-align: center;
+		}
+		.prime-rank.top1  { color: #FFD700; font-size: 15px; }
+		.prime-rank.top2  { color: #C0C0C0; font-size: 14px; }
+		.prime-rank.top3  { color: #CD7F32; font-size: 14px; }
+		.prime-info { flex: 1; }
+		.prime-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #0A84FF;
+			cursor: pointer;
+			text-decoration: none;
+		}
+		.prime-name:active { opacity: 0.6; }
+		.prime-sub {
+			font-size: 12px;
+			color: #8E8E93;
+			margin-top: 1px;
+		}
+		.prime-amount {
+			font-size: 14px;
+			font-weight: 700;
+			color: #1C1C1E;
+			white-space: nowrap;
+		}
+		.prime-amount.ancien { color: #8E8E93; font-style: italic; }
+
+		/* TIMELINE */
+		.timeline-list {
+			max-height: calc(100vh - 200px);
+			overflow-y: auto;
+			padding: 4px 0;
+		}
+		.timeline-era {
+			font-size: 12px;
+			font-weight: 700;
+			color: #8E8E93;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 16px 4px 6px;
+		}
+		.timeline-era:first-child { margin-top: 0; }
+		.timeline-events {
+			background: #fff;
+			border-radius: 16px;
+			display: flex;
+			flex-direction: column;
+			gap: 0;
+		}
+		.timeline-event {
+			display: flex;
+			gap: 12px;
+			padding: 12px 14px;
+			border-bottom: 0.5px solid #F2F2F7;
+			align-items: flex-start;
+		}
+		.timeline-event:first-child { border-radius: 16px 16px 0 0; }
+		.timeline-event:last-child  { border-radius: 0 0 16px 16px; border-bottom: none; }
+		.timeline-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			margin-top: 4px;
+			flex-shrink: 0;
+		}
+		.dot-red    { background: #E3000F; }
+		.dot-blue   { background: #0A84FF; }
+		.dot-green  { background: #30D158; }
+		.dot-purple { background: #BF5AF2; }
+		.dot-orange { background: #FF9F0A; }
+		.dot-gray   { background: #8E8E93; }
+		.timeline-content {}
+		.timeline-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #1C1C1E;
+			line-height: 1.3;
+		}
+		.timeline-desc {
+			font-size: 12px;
+			color: #8E8E93;
+			margin-top: 2px;
+			line-height: 1.4;
+		}
+
+		/* ÎLES */
+		.iles-list {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			max-height: calc(100vh - 220px);
+			overflow-y: auto;
+			background: #fff;
+			border-radius: 16px;
+		}
+		.ile-card {
+			background: #fff;
+			border-radius: 0;
+			border: none;
+			border-bottom: 0.5px solid #F2F2F7;
+			padding: 13px 14px;
+			cursor: pointer;
+			transition: background 0.1s;
+		}
+		.ile-card:first-child { border-radius: 16px 16px 0 0; }
+		.ile-card:last-child  { border-radius: 0 0 16px 16px; border-bottom: none; }
+		.ile-card:active { background: #F9F9F9; }
+		.ile-card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 8px;
+		}
+		.ile-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #1C1C1E;
+		}
+		.ile-mer {
+			font-size: 11px;
+			font-weight: 700;
+			padding: 3px 8px;
+			border-radius: 100px;
+			color: #fff;
+			white-space: nowrap;
+			flex-shrink: 0;
+		}
+		.mer-east   { background: #0A84FF; }
+		.mer-grand  { background: #E3000F; }
+		.mer-new    { background: #BF5AF2; }
+		.mer-other  { background: #8E8E93; }
+		.ile-eps {
+			font-size: 12px;
+			color: #8E8E93;
+			margin-top: 3px;
+			font-weight: 500;
+		}
+		.ile-details {
+			display: none;
+			margin-top: 10px;
+			padding-top: 10px;
+			border-top: 0.5px solid #F2F2F7;
+		}
+		.ile-details.open { display: block; }
+		.ile-desc {
+			font-size: 13px;
+			color: #636366;
+			line-height: 1.5;
+			margin-bottom: 8px;
+		}
+		.ile-persos-title {
+			font-size: 11px;
+			font-weight: 700;
+			color: #8E8E93;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
+			margin-bottom: 6px;
+		}
+		.ile-persos {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+		}
+		.ile-perso-btn {
+			background: #F2F2F7;
+			border: none;
+			border-radius: 100px;
+			padding: 5px 10px;
+			font-size: 12px;
+			font-weight: 600;
+			color: #0A84FF;
+			cursor: pointer;
+			font-family: inherit;
+			transition: background 0.1s;
+		}
+		.ile-perso-btn:active { background: #E5E5EA; }
 
     </style>
 </head>
@@ -598,11 +819,34 @@
 			<div class="dico-list" id="dico-container"></div>
 		</div>
 
+		<!-- PRIMES -->
+		<div id="tab-primes" class="tab-content">
+			<p class="section-header">Classement des Primes</p>
+			<input type="text" id="primes-search" class="search-bar" placeholder="Rechercher un personnage..." oninput="renderPrimes()">
+			<div class="primes-list" id="primes-container"></div>
+		</div>
+
+		<!-- TIMELINE -->
+		<div id="tab-timeline" class="tab-content">
+			<p class="section-header">Chronologie</p>
+			<div class="timeline-list" id="timeline-container"></div>
+		</div>
+
+		<!-- ÎLES -->
+		<div id="tab-iles" class="tab-content">
+			<p class="section-header">Îles & Lieux</p>
+			<input type="text" id="iles-search" class="search-bar" placeholder="Rechercher une île..." oninput="renderIles()">
+			<div class="iles-list" id="iles-container"></div>
+		</div>
+
 		<div class="bottom-nav">
 			<button class="nav-btn active" onclick="switchTab('tab-suivi', this)">Progression</button>
 			<button class="nav-btn" onclick="switchTab('tab-pokedex', this)">Pokédex</button>
 			<button class="nav-btn" onclick="switchTab('tab-fruits', this)">Fruits</button>
 			<button class="nav-btn" onclick="switchTab('tab-dico', this)">Dico</button>
+			<button class="nav-btn" onclick="switchTab('tab-primes', this)">Primes</button>
+			<button class="nav-btn" onclick="switchTab('tab-timeline', this)">Timeline</button>
+			<button class="nav-btn" onclick="switchTab('tab-iles', this)">Iles</button>
 		</div>
     </div>
 
@@ -612,8 +856,9 @@
 				<h3 class="modal-title" id="modal-title">Nom du personnage</h3>
 				<button class="close-btn" onclick="closeModal()">✖</button>
 			</div>
-			<div class="modal-body" id="modal-desc">
-				Chargement des informations...
+			<div class="modal-body">
+				<img id="modal-img" class="modal-img" src="" alt="Portrait du personnage">
+				<div id="modal-desc">Chargement des informations...</div>
 			</div>
 		</div>
 	</div>
@@ -628,7 +873,6 @@
         let currentWatched = 2;
 
         // --- DONNÉES DES ARCS ONE PACE (À compléter) ---
-        // J'ai mis les premiers, tu peux rajouter la suite facilement !
         const ARCS = [
             { title: "Romance Dawn", count: 4 },
             { title: "Orange Town", count: 3 },
@@ -694,35 +938,41 @@
 
 		// --- FONCTIONS DE LA POP-UP PERSONNAGE ---
         async function openCharacter(id) {
-            const modal = document.getElementById('char-modal');
-            const title = document.getElementById('modal-title');
-            const desc = document.getElementById('modal-desc');
-            
-            // On affiche la fenêtre avec un texte d'attente
-            modal.style.display = 'flex';
-            title.innerText = "Chargement...";
-            desc.innerText = "Recherche dans les archives de la Marine... 🏴‍☠️";
+			const modal = document.getElementById('char-modal');
+			const title = document.getElementById('modal-title');
+			const desc = document.getElementById('modal-desc');
+			const img = document.getElementById('modal-img'); // Ajout
+			
+			// On affiche la fenêtre avec un texte d'attente
+			modal.style.display = 'flex';
+			title.innerText = "Chargement...";
+			desc.innerText = "Recherche dans les archives de la Marine... 🏴‍☠️";
+			img.style.display = 'none'; // On masque l'image pendant le téléchargement
+			img.src = '';
 
-            try {
-                // On fait une requête spécifique pour CE personnage
-                const response = await fetch(`https://api.jikan.moe/v4/characters/${id}`);
-                const data = await response.json();
-                
-                const character = data.data;
-                title.innerText = character.name;
-                
-                // Si l'API possède une description ("about")
-                if (character.about) {
-                    // On remplace les sauts de ligne invisibles par des balises HTML <br> pour que ce soit joli
-                    desc.innerHTML = character.about.replace(/\n/g, '<br>');
-                } else {
-                    desc.innerText = "Aucune information trouvée pour ce personnage dans la base de données.";
-                }
-            } catch(e) {
-                title.innerText = "Erreur de connexion";
-                desc.innerText = "Impossible de récupérer les données des escargophones.";
-            }
-        }
+			try {
+				const response = await fetch(`https://api.jikan.moe/v4/characters/${id}`);
+				const data = await response.json();
+				
+				const character = data.data;
+				title.innerText = character.name;
+				
+				// NOUVEAU : Si l'API renvoie une image, on l'affiche
+				if (character.images && character.images.jpg && character.images.jpg.image_url) {
+					img.src = character.images.jpg.image_url;
+					img.style.display = 'block';
+				}
+				
+				if (character.about) {
+					desc.innerHTML = character.about.replace(/\n/g, '<br>');
+				} else {
+					desc.innerText = "Aucune information trouvée pour ce personnage dans la base de données.";
+				}
+			} catch(e) {
+				title.innerText = "Erreur de connexion";
+				desc.innerText = "Impossible de récupérer les données des escargophones.";
+			}
+		}
 
         function closeModal() {
             document.getElementById('char-modal').style.display = 'none';
@@ -1746,11 +1996,573 @@
 			});
 		}
 
+		// ========== PRIMES ==========
+		const BOUNTIES = [
+			// Actuelles (post-Wano)
+			{ name: "Gol D. Roger",          crew: "Équipage de Roger",         bounty: 5564800000, ancien: true },
+			{ name: "Edward Newgate",        crew: "Équipage de Barbe Blanche", bounty: 5046000000, ancien: true },
+			{ name: "Kaidou",                crew: "Équipage aux Cent Bêtes",   bounty: 4611100000 },
+			{ name: "Charlotte Linlin",      crew: "Big Mom Pirates",           bounty: 4388000000 },
+			{ name: "Shanks",                crew: "Red Hair Pirates",          bounty: 4048900000 },
+			{ name: "Marshall D. Teach",     crew: "Équipage de Barbe Noire",   bounty: 3996000000 },
+			{ name: "Dracule Mihawk",        crew: "Cross Guild",               bounty: 3590000000 },
+			{ name: "Buggy",                 crew: "Cross Guild",               bounty: 3189000000 },
+			{ name: "Monkey D. Luffy",       crew: "Équipage Chapeau de Paille",bounty: 3000000000 },
+			{ name: "Trafalgar D. Water Law",crew: "Heart Pirates",             bounty: 3000000000 },
+			{ name: "Eustass Kid",           crew: "Kid Pirates",               bounty: 3000000000 },
+			{ name: "Crocodile",             crew: "Cross Guild",               bounty: 1965000000 },
+			{ name: "Boa Hancock",           crew: "Kuja Pirates",              bounty: 1659000000 },
+			{ name: "Jinbe",                 crew: "Équipage Chapeau de Paille",bounty: 1100000000 },
+			{ name: "Roronoa Zoro",          crew: "Équipage Chapeau de Paille",bounty: 1111000000 },
+			{ name: "Sanji",                 crew: "Équipage Chapeau de Paille",bounty: 1032000000 },
+			{ name: "Nico Robin",            crew: "Équipage Chapeau de Paille",bounty: 930000000 },
+			{ name: "Usopp",                 crew: "Équipage Chapeau de Paille",bounty: 500000000 },
+			{ name: "Franky",                crew: "Équipage Chapeau de Paille",bounty: 394000000 },
+			{ name: "Brook",                 crew: "Équipage Chapeau de Paille",bounty: 383000000 },
+			{ name: "Nami",                  crew: "Équipage Chapeau de Paille",bounty: 366000000 },
+			{ name: "X Drake",               crew: "SWORD / Marine",            bounty: 222000000 },
+			{ name: "Basil Hawkins",         crew: "Kid Pirates (ancien)",      bounty: 320000000 },
+			{ name: "Scratchmen Apoo",       crew: "On Air Pirates",            bounty: 350000000 },
+			{ name: "Capone Bege",           crew: "Fire Tank Pirates",         bounty: 350000000 },
+			{ name: "Killer",                crew: "Kid Pirates",               bounty: 200000000 },
+			{ name: "Bartolomeo",            crew: "Barto Club",                bounty: 200000000 },
+			{ name: "Cavendish",             crew: "Beautiful Pirates",         bounty: 330000000 },
+			{ name: "Doflamingo",            crew: "Donquixote Pirates",        bounty: 340000000, ancien: true },
+			{ name: "Gecko Moria",           crew: "Thriller Bark Pirates",     bounty: 320000000, ancien: true },
+			{ name: "Portgas D. Ace",        crew: "Équipage Barbe Blanche",    bounty: 550000000, ancien: true },
+			{ name: "Sabo",                  crew: "Armée Révolutionnaire",     bounty: 602000000 },
+			{ name: "Tony Tony Chopper",     crew: "Équipage Chapeau de Paille",bounty: 1000 },
+			{ name: "Perona",                crew: "Thriller Bark (ancien)",    bounty: 80000000 },
+			{ name: "Coby",                  crew: "Marine / SWORD",            bounty: 0 },
+		];
+
+		// "Dictionnaire VIP" pour forcer les bonnes fiches des personnages populaires
+		let primesJikanCache = {
+			"Nami": 723,
+			"Vivi": 726,
+			"Monkey D. Luffy": 40,
+			"Roronoa Zoro": 62,
+			"Sanji": 305,
+			"Tony Tony Chopper": 309,
+			"Nico Robin": 61,
+			"Franky": 64,
+			"Brook": 5627,
+			"Jinbe": 18938,
+			"Portgas D. Ace": 2072,
+			"Sabo": 32893,
+			"Yamato": 184114,
+			"Boa Hancock": 16342,
+			"Trafalgar Law": 13767,
+			"Usopp": 724,
+			 
+		};
+
+		async function openCharacterByName(name) {
+			const modal = document.getElementById('char-modal');
+			const title = document.getElementById('modal-title');
+			const desc  = document.getElementById('modal-desc');
+			const img   = document.getElementById('modal-img');
+			
+			modal.style.display = 'flex';
+			title.innerText = name;
+			desc.innerText   = "Recherche dans les archives... 🏴‍☠️";
+			img.style.display = 'none';
+
+			// 1. Est-ce un personnage VIP (Nami, Vivi, etc.) ?
+			if (primesJikanCache[name]) {
+				return openCharacter(primesJikanCache[name]);
+			}
+
+			// 2. NOUVEAU : On cherche dans le Pokédex One Piece téléchargé en arrière-plan !
+			const searchLower = name.toLowerCase().trim();
+			
+			const localChar = allCharacters.find(c => {
+				// MyAnimeList renvoie les noms sous forme "Nefertari, Vivi". On enlève la virgule.
+				const malName = c.character.name.toLowerCase().replace(',', '');
+				
+				// On vérifie si notre clic ("vivi") est contenu dans le nom officiel ("nefertari vivi")
+				return malName.includes(searchLower) || searchLower.includes(malName);
+			});
+
+			if (localChar) {
+				// On l'a trouvé ! On sauvegarde son ID et on l'ouvre
+				primesJikanCache[name] = localChar.character.mal_id;
+				return openCharacter(localChar.character.mal_id);
+			}
+
+			// 3. Solution de secours : Recherche sur tout MyAnimeList si on ne l'a pas trouvé
+			try {
+				const r = await fetch(`https://api.jikan.moe/v4/characters?q=${encodeURIComponent(name)}&limit=1`);
+				const d = await r.json();
+				if (d.data && d.data.length > 0) {
+					const id = d.data[0].mal_id;
+					primesJikanCache[name] = id;
+					openCharacter(id);
+				} else {
+					desc.innerText = "Personnage non trouvé dans la base de données.";
+				}
+			} catch(e) {
+				desc.innerText = "Erreur de connexion.";
+			}
+		}
+
+		function formatBounty(n) {
+			if (n === 0) return "—";
+			if (n >= 1000000000) return (n/1000000000).toFixed(n%1000000000===0?0:3).replace(/\.?0+$/,'') + " Md ฿";
+			if (n >= 1000000)    return (n/1000000).toFixed(0) + " M ฿";
+			return n.toLocaleString() + " ฿";
+		}
+
+		function renderPrimes() {
+			const search = document.getElementById('primes-search').value.toLowerCase();
+			const container = document.getElementById('primes-container');
+			container.innerHTML = '';
+
+			const sorted = [...BOUNTIES]
+				.filter(p => p.name.toLowerCase().includes(search) || p.crew.toLowerCase().includes(search))
+				.sort((a,b) => b.bounty - a.bounty);
+
+			sorted.forEach((p, i) => {
+				const rank = i + 1;
+				let rankClass = '', rankLabel = '#' + rank;
+				if (rank === 1) { rankClass = 'top1'; rankLabel = '🥇'; }
+				if (rank === 2) { rankClass = 'top2'; rankLabel = '🥈'; }
+				if (rank === 3) { rankClass = 'top3'; rankLabel = '🥉'; }
+
+				const div = document.createElement('div');
+				div.className = 'prime-card';
+				div.innerHTML = `
+					<div class="prime-rank ${rankClass}">${rankLabel}</div>
+					<div class="prime-info">
+						<div class="prime-name" onclick="openCharacterByName('${p.name.replace(/'/g,"\\'")}')">
+							${p.name}
+						</div>
+						<div class="prime-sub">${p.crew}</div>
+					</div>
+					<div class="prime-amount ${p.ancien ? 'ancien' : ''}">${formatBounty(p.bounty)}${p.ancien?' †':''}</div>
+				`;
+				container.appendChild(div);
+			});
+
+			if (sorted.length === 0) {
+				container.innerHTML = '<p style="color:#8E8E93;font-size:0.9em;text-align:center;padding:20px">Aucun résultat 💰</p>';
+			}
+		}
+
+		// ========== TIMELINE ==========
+		const TIMELINE = [
+			{
+				era: "Il y a ~800 ans — Siècle Oublié",
+				color: "dot-purple",
+				events: [
+					{ title: "Fondation du Gouvernement Mondial", desc: "20 royaumes s'allient pour vaincre l'Ancien Royaume. 19 familles deviennent les Célestes Dragons." },
+					{ title: "Disparition de Joy Boy", desc: "Joy Boy échoue à tenir sa promesse à Poséidon. Laisse un message d'excuses sur le Ponéglyphe de Fish-Man Island." },
+					{ title: "Création des Ponéglyphes", desc: "L'Ancien Royaume grave la vérité sur des pierres indestructibles pour préserver l'histoire malgré la censure." },
+				]
+			},
+			{
+				era: "Il y a ~40 ans",
+				color: "dot-orange",
+				events: [
+					{ title: "Incident de God Valley", desc: "Roger et Garp s'allient pour vaincre les Pirates de Rocks de Rocks D. Xebec. L'événement est effacé de l'histoire officielle." },
+					{ title: "Naissance de Monkey D. Dragon", desc: "Fils de Garp, futur fondateur de l'Armée Révolutionnaire, considéré l'homme le plus recherché du monde." },
+				]
+			},
+			{
+				era: "Il y a ~26 ans",
+				color: "dot-red",
+				events: [
+					{ title: "Roger conquiert Laugh Tale", desc: "Gold Roger et son équipage atteignent la dernière île et découvrent le One Piece et la vérité sur le Siècle Oublié." },
+					{ title: "Exécution de Roger à Loguetown", desc: "Roger se rend et est exécuté publiquement. Ses derniers mots déclenchent la Grande Ère des Pirates." },
+					{ title: "Destruction d'Ohara", desc: "Le Gouvernement ordonne un Buster Call contre l'île des archéologues. Nico Robin est la seule survivante." },
+				]
+			},
+			{
+				era: "Il y a ~17 ans",
+				color: "dot-orange",
+				events: [
+					{ title: "Mort de Portgas D. Rouge", desc: "La mère d'Ace meurt en donnant naissance à lui, après avoir retardé sa naissance de 20 mois pour le protéger." },
+					{ title: "Naissance de Portgas D. Ace", desc: "Fils secret de Gold Roger, confié à Garp puis à Dadan. Deviendra le commandant de la 2ème flotte de Barbe Blanche." },
+				]
+			},
+			{
+				era: "Il y a ~12 ans — Enfance de Luffy",
+				color: "dot-blue",
+				events: [
+					{ title: "Luffy mange le Gomu Gomu no Mi", desc: "À 7 ans, Luffy avale accidentellement le fruit du démon de Shanks. Son corps devient élastique comme du caoutchouc." },
+					{ title: "Shanks perd son bras", desc: "Shanks sacrifie son bras pour sauver Luffy d'un Roi des Mers. Il lui remet son chapeau de paille en lui demandant de le lui rendre un jour." },
+					{ title: "Luffy rencontre Ace et Sabo", desc: "Les trois frères grandissent ensemble dans les montagnes de Goa. Sabo est cru mort après une attaque des Nobles." },
+				]
+			},
+			{
+				era: "Début de l'histoire — East Blue",
+				color: "dot-blue",
+				events: [
+					{ title: "Luffy quitte son île", desc: "À 17 ans, Luffy part à l'aventure seul à bord d'un tonneau. Il commence à former son équipage." },
+					{ title: "Formation de l'équipage", desc: "Luffy recrute Zoro, Nami, Usopp puis Sanji au fil de ses aventures en East Blue." },
+					{ title: "Victoire contre Arlong", desc: "Luffy bat Arlong Park et libère Nami et le village de Cocoyasi. Sa prime atteint 30 millions." },
+				]
+			},
+			{
+				era: "Grand Line — Saga Baroque Works",
+				color: "dot-red",
+				events: [
+					{ title: "Entrée sur Grand Line", desc: "L'équipage passe Reverse Mountain et entre sur Grand Line. Nami intègre l'équipage officiellement." },
+					{ title: "Recrutement de Robin & Vivi", desc: "Vivi rejoint temporairement l'équipage. Robin se rallie à Luffy après Alabasta." },
+					{ title: "Victoire contre Crocodile à Alabasta", desc: "Luffy bat Crocodile une troisième fois. Vivi sauve son royaume. L'équipage reçoit des primes pour la première fois." },
+				]
+			},
+			{
+				era: "Grand Line — Saga Skypiea & Water Seven",
+				color: "dot-green",
+				events: [
+					{ title: "Aventure à Skypiea", desc: "L'équipage atteint l'île céleste, bat Enel et découvre un Ponéglyphe historique. Robin déchiffre son message." },
+					{ title: "Mort du Going Merry", desc: "Le Going Merry est détruit à Enies Lobby. L'équipage lui fait des funérailles marines." },
+					{ title: "Bataille d'Enies Lobby", desc: "L'équipage affronte le CP9 pour sauver Robin. Luffy déclare la guerre au Gouvernement Mondial. Primes explosent." },
+				]
+			},
+			{
+				era: "Grand Line — Saga Thriller Bark & Sabaody",
+				color: "dot-purple",
+				events: [
+					{ title: "Thriller Bark", desc: "Combat contre Gecko Moria. Zoro sacrifie toute sa douleur pour protéger Luffy face à Bartholomew Kuma." },
+					{ title: "Arrivée à Sabaody", desc: "Les 11 Supernovas se retrouvent. Luffy frappe un Céleste Dragon. Kizaru arrive. L'équipage est dispersé par Kuma." },
+				]
+			},
+			{
+				era: "Guerre au Sommet — Marine Ford",
+				color: "dot-red",
+				events: [
+					{ title: "Luffy s'infiltre à Impel Down", desc: "Luffy force les portes de la prison la plus sécurisée du monde pour sauver Ace, aidé par Ivankov et Crocodile." },
+					{ title: "Guerre de Marine Ford", desc: "La Marine affronte Barbe Blanche et ses alliés. Ace est exécuté. Barbe Blanche meurt au combat. Fin d'une ère." },
+					{ title: "Mort d'Ace", desc: "Ace est tué par Akainu en protégeant Luffy. L'événement traumatise Luffy et marque un tournant de la série." },
+				]
+			},
+			{
+				era: "Ellipse — 2 ans de formation",
+				color: "dot-green",
+				events: [
+					{ title: "Signal de Luffy à Marineford", desc: "Luffy retourne à Marineford pour sonner la cloche 16 fois — message codé à son équipage : se reformer dans 2 ans." },
+					{ title: "Entraînement de Luffy avec Rayleigh", desc: "Rayleigh entraîne Luffy au Fluide sur l'île de Rusukaina pendant 2 ans." },
+					{ title: "Luffy maîtrise les 3 types de Fluide", desc: "À la fin de l'ellipse, Luffy maîtrise le Fluide de l'Armement, de l'Observation et des Rois." },
+				]
+			},
+			{
+				era: "Nouveau Monde — Saga Dressrosa",
+				color: "dot-orange",
+				events: [
+					{ title: "Alliance Luffy-Law", desc: "Les deux capitaines forment une alliance pour abattre Kaido en détruisant l'usine de SMILE de Doflamingo." },
+					{ title: "Luffy bat Doflamingo", desc: "Luffy utilise le Gear 4 pour la première fois et bat Doflamingo. Sa prime atteint 500 millions." },
+					{ title: "Création de l'Alliance Chapeau de Paille", desc: "Plusieurs équipages subordonnés rejoignent l'alliance de Luffy après Dressrosa, portant l'alliance à 5000 membres." },
+				]
+			},
+			{
+				era: "Nouveau Monde — Saga Whole Cake Island",
+				color: "dot-purple",
+				events: [
+					{ title: "Mariage raté de Sanji", desc: "L'équipage infiltre le territoire de Big Mom pour récupérer Sanji. Le mariage tourne au chaos." },
+					{ title: "Luffy bat Katakuri", desc: "Combat épique de 11h. Luffy développe le Kenbunshoku avancé pour entrevoir le futur." },
+				]
+			},
+			{
+				era: "Nouveau Monde — Saga Wano",
+				color: "dot-red",
+				events: [
+					{ title: "Bataille d'Onigashima", desc: "Alliance Chapeau de Paille + Minks + Samouraïs contre l'armée de Kaido. Plus grande bataille de la série." },
+					{ title: "Éveil du Gear 5", desc: "Luffy 'meurt' et se réveille avec le Gear 5 — la forme du Dieu Soleil Nika. Kaido est vaincu." },
+					{ title: "Luffy devient Yonko", desc: "Après Wano, Luffy et Buggy sont officiellement proclamés Quatre Empereurs. Prime de Luffy : 3 milliards." },
+				]
+			},
+			{
+				era: "Saga Egghead — En cours",
+				color: "dot-blue",
+				events: [
+					{ title: "Révélations de Vegapunk", desc: "Vegapunk révèle l'origine des fruits du démon, l'histoire du monde et l'existence d'Imu avant sa mort." },
+					{ title: "Siège d'Egghead par les Gorosei", desc: "Les cinq doyens révèlent leur véritable forme monstrueuse. L'équipage s'échappe de justesse." },
+				]
+			},
+		];
+
+		function renderTimeline() {
+			const container = document.getElementById('timeline-container');
+			container.innerHTML = '';
+			TIMELINE.forEach(era => {
+				const eraLabel = document.createElement('div');
+				eraLabel.className = 'timeline-era';
+				eraLabel.innerText = era.era;
+				container.appendChild(eraLabel);
+
+				const block = document.createElement('div');
+				block.className = 'timeline-events';
+				era.events.forEach(ev => {
+					const div = document.createElement('div');
+					div.className = 'timeline-event';
+					div.innerHTML = `
+						<div class="timeline-dot ${era.color}"></div>
+						<div class="timeline-content">
+							<div class="timeline-title">${ev.title}</div>
+							<div class="timeline-desc">${ev.desc}</div>
+						</div>
+					`;
+					block.appendChild(div);
+				});
+				container.appendChild(block);
+			});
+		}
+
+		// ========== ÎLES ==========
+		const ILES = [
+			{
+				name: "Foosha Village (Île de Luffy)",
+				mer: "East Blue", merClass: "mer-east",
+				eps: "Épisodes 1–3",
+				desc: "Village natal de Monkey D. Luffy situé dans le East Blue. C'est ici que Luffy rencontre Shanks enfant et mange accidentellement le Gomu Gomu no Mi. Le village paisible est gardé par la bande de montagnes de Dadan.",
+				persos: ["Monkey D. Luffy", "Shanks", "Makino", "Woop Slap", "Monkey D. Garp"]
+			},
+			{
+				name: "Shells Town",
+				mer: "East Blue", merClass: "mer-east",
+				eps: "Épisodes 1–3",
+				desc: "Ville portuaire sous l'emprise du capitaine Morgan et de son fils Helmeppo. C'est là que Luffy libère Roronoa Zoro, prisonnier depuis 3 semaines sans nourriture.",
+				persos: ["Roronoa Zoro", "Coby", "Morgan", "Helmeppo"]
+			},
+			{
+				name: "Orange Town",
+				mer: "East Blue", merClass: "mer-east",
+				eps: "Épisodes 4–8",
+				desc: "Ville de marchands terrorisée par le clown pirate Buggy et son équipage. Luffy y affronte Buggy pour la première fois et rencontre officiellement Nami.",
+				persos: ["Nami", "Buggy le Clown", "Chouchou", "Mohji"]
+			},
+			{
+				name: "Syrup Village",
+				mer: "East Blue", merClass: "mer-east",
+				eps: "Épisodes 9–18",
+				desc: "Village tranquille où vit Usopp et son amie d'enfance Kaya. La bande des pirates noirs de Kuro menace le village. Luffy y recrute Usopp et récupère le Going Merry.",
+				persos: ["Usopp", "Kaya", "Kuro le Majordome", "Jango"]
+			},
+			{
+				name: "Baratie",
+				mer: "East Blue", merClass: "mer-east",
+				eps: "Épisodes 19–30",
+				desc: "Restaurant flottant en pleine mer tenu par le chef Zeff. Luffy y rencontre et recrute Sanji après une confrontation avec Don Krieg et son armada.",
+				persos: ["Sanji", "Zeff", "Don Krieg", "Gin", "Pearl"]
+			},
+			{
+				name: "Arlong Park",
+				mer: "East Blue", merClass: "mer-east",
+				eps: "Épisodes 31–44",
+				desc: "Forteresse aquatique de l'homme-poisson Arlong qui oppresse le village de Cocoyasi et la famille de Nami depuis 8 ans. Victoire décisive de Luffy contre l'injustice.",
+				persos: ["Nami", "Arlong", "Nojiko", "Hatchan", "Genzo", "Nezumi"]
+			},
+			{
+				name: "Loguetown",
+				mer: "East Blue", merClass: "mer-east",
+				eps: "Épisodes 45–53",
+				desc: "Ville natale et lieu d'exécution de Gold Roger, surnommée 'ville du début et de la fin'. Dernière escale avant Grand Line. Luffy failli y être exécuté par Buggy à l'endroit exact où Roger est mort.",
+				persos: ["Smoker", "Tashigi", "Buggy", "Alvida", "Gol D. Roger (flashback)"]
+			},
+			{
+				name: "Reverse Mountain",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 62–63",
+				desc: "Montagne à l'entrée de Grand Line dont les courants remontent à contre-sens. L'équipage y entre involontairement par le courant et est avalé par le Laboon, un immense requin baleine.",
+				persos: ["Laboon", "Crocus"]
+			},
+			{
+				name: "Whisky Peak",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 64–67",
+				desc: "Île apparemment festive où les pirates sont fêtés à leur arrivée. En réalité, les habitants sont tous des agents de Baroque Works qui droguent et capturent les pirates pour leur prime.",
+				persos: ["Zoro", "Vivi", "Igaram", "Mr. 9", "Miss Wednesday"]
+			},
+			{
+				name: "Little Garden",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 70–77",
+				desc: "Île préhistorique peuplée de dinosaures et de créatures géantes, figée dans l'ère primaire. Deux géants, Dorry et Broggy, s'y battent depuis 100 ans pour un duel d'honneur.",
+				persos: ["Dorry", "Broggy", "Mr. 3", "Miss Goldenweek", "Mr. 5", "Miss Valentine"]
+			},
+			{
+				name: "Drum Island",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 78–91",
+				desc: "Île enneigée aux 100 sommets en forme de tambour. Seul le médecin Hiriluk et le docteur Kureha y soignaient les malades. C'est là que Luffy recrute Tony Tony Chopper.",
+				persos: ["Tony Tony Chopper", "Doctorine Kureha", "Hiriluk", "Wapol", "Dalton"]
+			},
+			{
+				name: "Alabasta",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 92–130",
+				desc: "Royaume désertique en guerre civile provoquée par Baroque Works et Crocodile. Luffy bat Crocodile une troisième fois en activant le flux de sang pour durcir ses attaques. Vivi sauve son peuple.",
+				persos: ["Vivi", "Crocodile", "Nico Robin", "Igaram", "Pell", "Chaka", "Tashigi", "Smoker"]
+			},
+			{
+				name: "Skypiea",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 153–195",
+				desc: "Île céleste dans les nuages accessible via le Knock Up Stream. Gouvernée par le tyran Enel qui se prend pour un dieu. Luffy le bat en étant immunisé à la foudre grâce à son corps en caoutchouc.",
+				persos: ["Enel", "Conis", "Wyper", "Robin", "Nami", "Gan Fall"]
+			},
+			{
+				name: "Water Seven",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 229–263",
+				desc: "Cité aquatique réputée pour ses charpentiers et sa compagnie Galley-La. L'équipage y répare le Going Merry mais apprend que le navire est irréparable. Robin disparaît mystérieusement.",
+				persos: ["Franky", "Iceberg", "Rob Lucci", "Kaku", "Blueno", "Paulie", "Coby"]
+			},
+			{
+				name: "Enies Lobby",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 264–312",
+				desc: "Île judiciaire du Gouvernement Mondial toujours en plein jour. L'équipage de Chapeau de Paille déclare la guerre au Gouvernement pour libérer Robin. Le CP9 est battu. Le Going Merry meurt.",
+				persos: ["Nico Robin", "Rob Lucci", "Kaku", "Blueno", "Kalifa", "Franky", "Spandam"]
+			},
+			{
+				name: "Thriller Bark",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 337–381",
+				desc: "Immense navire-île gothique naviguant dans le Triangle de Florian. Gecko Moria vole les ombres des pirates pour animer des armées de zombies. Zoro fait face à Bartholomew Kuma.",
+				persos: ["Gecko Moria", "Perona", "Absalom", "Brook", "Bartholomew Kuma", "Hogback"]
+			},
+			{
+				name: "Sabaody Archipelago",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 382–405",
+				desc: "Archipel de bulles géantes, dernière escale avant Fish-Man Island. Les 11 Supernovas se croisent. Luffy frappe un Céleste Dragon. Kizaru dévaste le groupe. Kuma disperse tout l'équipage.",
+				persos: ["Kizaru", "Kuma", "Rayleigh", "Trafalgar Law", "Eustass Kid", "Hancock", "Shakky"]
+			},
+			{
+				name: "Amazon Lily",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 408–417",
+				desc: "Île secrète dans le Calm Belt, territoire des guerrières Kuja. Luffy y atterrit après être dispersé par Kuma. Boa Hancock l'aide à infiltrer Impel Down. Luffy apprend la mort d'Ace imminente.",
+				persos: ["Boa Hancock", "Boa Sandersonia", "Boa Marigold", "Silvers Rayleigh"]
+			},
+			{
+				name: "Impel Down",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 422–458",
+				desc: "Prison sous-marine du Gouvernement considérée comme imprenable. 6 niveaux de l'Enfer. Luffy descend jusqu'au niveau 6 pour libérer Ace, déclenchant la plus grande évasion de l'histoire.",
+				persos: ["Magellan", "Crocodile", "Jinbe", "Ivankov", "Buggy", "Bon Clay", "Portgas D. Ace"]
+			},
+			{
+				name: "Marine Ford",
+				mer: "Grand Line", merClass: "mer-grand",
+				eps: "Épisodes 459–489",
+				desc: "Base centrale de la Marine et lieu de la Guerre au Sommet. Barbe Blanche mobilise ses 16 flottes. Ace est exécuté malgré tout. Barbe Blanche meurt debout. Shanks met fin à la guerre.",
+				persos: ["Portgas D. Ace", "Barbe Blanche", "Akainu", "Aokiji", "Kizaru", "Sengoku", "Garp", "Shanks"]
+			},
+			{
+				name: "Fish-Man Island",
+				mer: "Nouveau Monde", merClass: "mer-new",
+				eps: "Épisodes 523–574",
+				desc: "Île sous-marine à 10 000m de profondeur, peuplée de poissons-hommes et sirènes. Luffy bat Hody Jones qui voulait exterminer les humains. Shirahoshi est révélée être l'Arme Antique Poséidon.",
+				persos: ["Shirahoshi", "Neptune", "Hody Jones", "Jinbe", "Nami", "Robin"]
+			},
+			{
+				name: "Punk Hazard",
+				mer: "Nouveau Monde", merClass: "mer-new",
+				eps: "Épisodes 579–625",
+				desc: "Île abandonnée moitié feu moitié glace. Laboratoire secret de César Clown pour Doflamingo. L'alliance Luffy-Law est formée ici. Le SAD est détruit, coupant l'approvisionnement de Kaido en SMILE.",
+				persos: ["Trafalgar Law", "César Clown", "Smoker", "Tashigi", "Monet", "Vergo", "Kinémon"]
+			},
+			{
+				name: "Dressrosa",
+				mer: "Nouveau Monde", merClass: "mer-new",
+				eps: "Épisodes 629–746",
+				desc: "Royaume méditerranéen sous la coupe de Doflamingo. Des milliers de citoyens ont été transformés en jouets. Le Corrida Colosseum abrite le tournoi pour le Mera Mera no Mi. Luffy utilise le Gear 4 pour la première fois.",
+				persos: ["Doflamingo", "Law", "Sabo", "Viola", "Rebecca", "Kyros", "Bartolomeo", "Cavendish", "Fujitora"]
+			},
+			{
+				name: "Zou",
+				mer: "Nouveau Monde", merClass: "mer-new",
+				eps: "Épisodes 751–779",
+				desc: "Île vivante sur le dos de l'éléphant millénaire Zunesha. Territoire des Minks. Jack de l'équipage de Kaido a attaqué l'île au gaz. Les Road Ponéglyphes et la connexion avec les Kozuki sont révélés.",
+				persos: ["Inuarashi", "Nekomamushi", "Pedro", "Carrot", "Kinémon", "Momonosuke", "Trafalgar Law"]
+			},
+			{
+				name: "Whole Cake Island",
+				mer: "Nouveau Monde", merClass: "mer-new",
+				eps: "Épisodes 783–877",
+				desc: "Île-gâteau de Big Mom, territoire des Charlotte. L'équipage infiltre pour récupérer Sanji. Luffy bat Katakuri en développant le Kenbunshoku avancé. Le mariage Sanji-Pudding vire au chaos total.",
+				persos: ["Charlotte Linlin", "Sanji", "Pudding", "Katakuri", "Cracker", "Smoothie", "Perospero"]
+			},
+			{
+				name: "Pays de Wa (Wano)",
+				mer: "Nouveau Monde", merClass: "mer-new",
+				eps: "Épisodes 890–1085",
+				desc: "Nation isolée depuis des siècles à la culture japonaise féodale. Kaido et Orochi la gouvernent tyranniquement. La bataille d'Onigashima réunit tous les alliés contre les Yonko. Luffy éveille le Gear 5.",
+				persos: ["Kaido", "Orochi", "Yamato", "Oden Kozuki", "Kinémon", "Momonosuke", "Zoro", "Sanji", "Marco"]
+			},
+			{
+				name: "Egghead",
+				mer: "Nouveau Monde", merClass: "mer-new",
+				eps: "Épisodes 1086–en cours",
+				desc: "Île futuriste laboratoire de Vegapunk avec 900 ans d'avance technologique. Vegapunk révèle l'histoire du monde avant d'être assassiné. Les Gorosei révèlent leur vrai visage monstrueux.",
+				persos: ["Vegapunk", "Rob Lucci", "Kizaru", "Gorosei", "Bonney", "Atlas", "Shaka", "York"]
+			},
+		];
+
+		function toggleIle(card) {
+			const details = card.querySelector('.ile-details');
+			details.classList.toggle('open');
+		}
+
+		async function openPersoFromIle(name) {
+			await openCharacterByName(name);
+		}
+
+		function renderIles() {
+			const search = document.getElementById('iles-search').value.toLowerCase();
+			const container = document.getElementById('iles-container');
+			container.innerHTML = '';
+
+			const filtered = ILES.filter(i =>
+				i.name.toLowerCase().includes(search) ||
+				i.desc.toLowerCase().includes(search) ||
+				i.persos.some(p => p.toLowerCase().includes(search))
+			);
+
+			if (filtered.length === 0) {
+				container.innerHTML = '<p style="color:#8E8E93;font-size:0.9em;text-align:center;padding:20px">Aucune île trouvée 🏝️</p>';
+				return;
+			}
+
+			filtered.forEach(ile => {
+				const div = document.createElement('div');
+				div.className = 'ile-card';
+				div.onclick = () => toggleIle(div);
+
+				const persosBtns = ile.persos.map(p =>
+					`<button class="ile-perso-btn" onclick="event.stopPropagation(); openPersoFromIle('${p.replace(/'/g,"\\'")}')">
+						${p}
+					</button>`
+				).join('');
+
+				div.innerHTML = `
+					<div class="ile-card-header">
+						<span class="ile-name">${ile.name}</span>
+						<span class="ile-mer ${ile.merClass}">${ile.mer}</span>
+					</div>
+					<div class="ile-eps">📺 ${ile.eps}</div>
+					<div class="ile-details">
+						<div class="ile-desc">${ile.desc}</div>
+						<div class="ile-persos-title">Personnages clés</div>
+						<div class="ile-persos">${persosBtns}</div>
+					</div>
+				`;
+				container.appendChild(div);
+			});
+		}
+
         // --- INITIALISATION ---
         fetchProgress();
 		loadPokedex();
 		renderFruits();
 		renderDico();
+		renderPrimes();
+		renderTimeline();
+		renderIles();
     </script>
 </body>
 </html>
