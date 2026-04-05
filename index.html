@@ -7,172 +7,485 @@
 	<link rel="icon" type="image/png" href="https://custom-progress-bar.com/cdn/images/205/one-piece-luffy-straw-hat-custom-progress-bar-m.png">
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-		/* Thème Clair - One Piece */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f8; /* Gris très clair pour le fond */
-            color: #333333; /* Texte sombre pour la lisibilité */
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+		/* ===== BASE ===== */
+		* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        .card {
-            background-color: #ffffff; /* Carte blanche */
-            border-radius: 15px;
-            padding: 20px;
-            width: 100%;
-            max-width: 350px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            text-align: center;
-            /*border-top: 5px solid #E3000F; Ligne rouge Luffy en haut*/
-			padding-bottom: 80px;
-        }
-        
-        h1 { 
-            margin-top: 0;
-			margin-bottom: 10px; /* Un peu d'espace sous le logo */
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+			background-color: #F2F2F7;
+			color: #1C1C1E;
+			margin: 0;
+			padding: 16px 16px 90px;
 			display: flex;
-			justify-content: center;
-        }
-
-		.logo-title-img {
-			max-width: 200px;  /* Ajuste cette valeur selon la forme de ton logo */
-			height: auto;     /* Garde les proportions */
-			max-height: 80px; /* Évite qu'il ne prenne trop de place en hauteur */
-		}
-        
-        .progress-bar {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            height: 22px;
-            margin: 15px 0;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background-color: #000000; /* Jaune Chapeau de paille */
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        #percentage-text {
-            font-weight: bold;
-            color: #005C97; /* Bleu Océan */
-            margin-bottom: 10px;
-        }
-        /* Liste des Arcs */
-        .arc-list {
-            margin-top: 20px;
-            text-align: left;
-            max-height: 280px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        
-        .arc-item {
-            background: #ffffff;
-            margin-bottom: 10px;
-            padding: 12px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #eeeeee;
-            border-left: 5px solid #cccccc; /* Gris par défaut (non commencé) */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-        }
-        
-        .arc-item.completed {
-            border-left-color: #005C97; /* Bleu pour les arcs terminés */
-            background-color: #f0f7ff;
-        }
-        
-        .arc-item.in-progress {
-            border-left-color: #FBC02D; /* Jaune pour l'arc en cours */
-            background-color: #fffdf5;
-        }
-        
-        .arc-title { 
-            font-weight: 700; 
-            font-size: 0.9em; 
-            color: #333;
-        }
-        
-        .arc-progress { 
-            font-size: 0.85em; 
-            color: #555; 
-            background: #f0f0f0; 
-            padding: 4px 8px; 
-            border-radius: 12px;
-            font-weight: 600;
-        }
-        
-        /* Personnalisation de la barre de défilement (scroll) */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #bbb; }
-
-		/* --- Nouveaux styles pour les badges --- */
-		.badge {
-			font-size: 0.7em;
-			padding: 3px 6px;
-			border-radius: 4px;
-			margin-left: 8px;
-			font-weight: bold;
-			color: white;
-			vertical-align: middle;
-		}
-		.badge-kai {
-			background-color: #726f74; /* Violet Anime-Sama */
-		}
-
-		/* --- Nouveaux styles pour le groupe de boutons --- */
-		button {
-			color: #ffffff;
-			border: none;
-			padding: 15px 10px;
-			font-size: 1.1em;
-			border-radius: 30px;
-			cursor: pointer;
-			font-weight: bold;
-			transition: all 0.2s ease;
-			display: flex;
-			justify-content: center;
+			flex-direction: column;
 			align-items: center;
 		}
 
+		/* ===== CARTE PRINCIPALE ===== */
+		.card {
+			background: transparent;
+			border-radius: 0;
+			padding: 0;
+			width: 100%;
+			max-width: 390px;
+			box-shadow: none;
+			border: none;
+		}
+
+		h1 {
+			margin: 8px 0 20px;
+			display: flex;
+			justify-content: center;
+		}
+
+		.logo-title-img {
+			max-width: 160px;
+			height: auto;
+			max-height: 60px;
+		}
+
+		/* ===== ONGLETS CONTENU ===== */
+		.tab-content { display: none; }
+		.tab-content.active { display: block; }
+
+		/* ===== BARRE DE PROGRESSION ===== */
+		.progress-bar {
+			width: 100%;
+			background: #E5E5EA;
+			border-radius: 100px;
+			overflow: hidden;
+			height: 8px;
+			margin: 12px 0 8px;
+		}
+
+		.progress-fill {
+			height: 100%;
+			background: linear-gradient(90deg, #E3000F, #FF453A);
+			width: 0%;
+			border-radius: 100px;
+			transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		#percentage-text {
+			font-size: 13px;
+			font-weight: 500;
+			color: #8E8E93;
+			text-align: center;
+			margin-bottom: 16px;
+			letter-spacing: -0.1px;
+		}
+
+		/* ===== BOUTONS +1 / -1 ===== */
 		.btn-group {
 			display: flex;
 			gap: 10px;
-			margin: 15px 0;
+			margin: 0 0 20px;
 			width: 100%;
-		}
-		.btn-add {
-			background-color: #E3000F; /* Ton rouge */
-			flex: 2; /* Prend plus de place */
-		}
-		.btn-remove {
-			background-color: #9e9e9e; /* Gris discret */
-			flex: 1; /* Prend moins de place */
-		}
-		
-		/* --- SYSTÈME D'ONGLETS --- */
-		.tab-content {
-			display: none; /* Caché par défaut */
-			width: 100%;
-		}
-		.tab-content.active {
-			display: block; /* Affiché uniquement si actif */
 		}
 
-		/* --- MENU DU BAS (Navigation) --- */
+		button {
+			font-family: inherit;
+			font-weight: 600;
+			border: none;
+			cursor: pointer;
+			transition: transform 0.1s ease, opacity 0.1s ease;
+		}
+
+		button:active { transform: scale(0.97); opacity: 0.85; }
+
+		.btn-add {
+			background: #E3000F;
+			color: #fff;
+			padding: 14px;
+			font-size: 16px;
+			border-radius: 14px;
+			flex: 2;
+			letter-spacing: -0.3px;
+		}
+
+		.btn-remove {
+			background: #E5E5EA;
+			color: #636366;
+			padding: 14px;
+			font-size: 16px;
+			border-radius: 14px;
+			flex: 1;
+		}
+
+		/* ===== SECTION HEADER ===== */
+		.section-header {
+			font-size: 13px;
+			font-weight: 600;
+			color: #8E8E93;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0 4px 8px;
+		}
+
+		/* ===== LISTE DES ARCS ===== */
+		.arc-list {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			max-height: 320px;
+			overflow-y: auto;
+			background: #fff;
+			border-radius: 16px;
+			padding: 0 4px;
+		}
+
+		.arc-item {
+			background: #fff;
+			padding: 11px 12px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border: none;
+			border-left: none;
+			border-bottom: 0.5px solid #F2F2F7;
+			box-shadow: none;
+			border-radius: 0;
+			margin: 0;
+		}
+
+		.arc-item:first-child { border-radius: 16px 16px 0 0; }
+		.arc-item:last-child  { border-radius: 0 0 16px 16px; border-bottom: none; }
+
+		.arc-item.completed  { background: #fff; }
+		.arc-item.in-progress { background: #FFFBF0; }
+
+		.arc-item.completed .arc-title  { color: #8E8E93; }
+		.arc-item.in-progress .arc-title { color: #1C1C1E; }
+
+		.arc-title {
+			font-size: 15px;
+			font-weight: 500;
+			color: #C7C7CC;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.arc-progress {
+			font-size: 13px;
+			font-weight: 600;
+			color: #8E8E93;
+			background: none;
+			padding: 0;
+		}
+
+		.arc-item.in-progress .arc-progress { color: #facd2a; }
+		.arc-item.completed   .arc-progress { color: #5663f0; }
+
+		/* ===== BADGES ===== */
+		.badge { font-size: 10px; padding: 2px 6px; border-radius: 6px; font-weight: 600; color: #fff; }
+		.badge-kai { background: #8E8E93; }
+
+		/* ===== BARRE DE RECHERCHE ===== */
+		.search-bar {
+			width: 100%;
+			padding: 10px 14px;
+			margin-bottom: 12px;
+			background: #fff;
+			border: none;
+			border-radius: 12px;
+			font-size: 15px;
+			font-family: inherit;
+			color: #1C1C1E;
+			outline: none;
+			box-sizing: border-box;
+			box-shadow: none;
+			-webkit-appearance: none;
+		}
+
+		.search-bar::placeholder { color: #C7C7CC; }
+
+		/* ===== FILTRES ===== */
+		.fruit-filters, .dico-filters {
+			display: flex;
+			gap: 6px;
+			margin-bottom: 12px;
+			flex-wrap: wrap;
+		}
+
+		.filter-btn, .dico-filter-btn {
+			padding: 6px 14px !important;
+			font-size: 13px !important;
+			font-family: inherit;
+			font-weight: 600;
+			border-radius: 100px !important;
+			border: none !important;
+			background: #E5E5EA !important;
+			color: #636366 !important;
+			cursor: pointer;
+			transition: all 0.15s ease;
+			flex-shrink: 0;
+		}
+
+		.filter-btn.active-filter, .dico-filter-btn.active-dico {
+			background: #E3000F !important;
+			color: #fff !important;
+		}
+
+		.dico-filter-btn[data-cat="Fluide"].active-dico     { background: #0A84FF !important; }
+		.dico-filter-btn[data-cat="Factions"].active-dico   { background: #E3000F !important; }
+		.dico-filter-btn[data-cat="Géographie"].active-dico { background: #30D158 !important; color: #fff !important; }
+		.dico-filter-btn[data-cat="Lore"].active-dico       { background: #BF5AF2 !important; }
+		.dico-filter-btn[data-cat="Combat"].active-dico     { background: #FF9F0A !important; }
+		.dico-filter-btn[data-cat="Divers"].active-dico     { background: #636366 !important; }
+
+		/* ===== POKÉDEX ===== */
+		.pokedex-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 10px;
+			max-height: 420px;
+			overflow-y: auto;
+		}
+
+		.char-card {
+			background: #fff;
+			border: none;
+			border-radius: 14px;
+			overflow: hidden;
+			text-align: center;
+		}
+
+		.char-img {
+			width: 100%;
+			height: 130px;
+			object-fit: contain;
+			background: #F9F9F9;
+			display: block;
+		}
+
+		.char-name {
+			font-size: 12px;
+			font-weight: 600;
+			padding: 8px 6px;
+			color: #1C1C1E;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		/* ===== FRUITS DU DÉMON ===== */
+		.fruits-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			max-height: 430px;
+			overflow-y: auto;
+			background: #fff;
+			border-radius: 16px;
+		}
+
+		.fruit-card {
+			background: #fff;
+			border: none;
+			border-radius: 0;
+			padding: 12px 14px;
+			border-bottom: 0.5px solid #F2F2F7;
+		}
+
+		.fruit-card:first-child { border-radius: 16px 16px 0 0; }
+		.fruit-card:last-child  { border-radius: 0 0 16px 16px; border-bottom: none; }
+
+		.fruit-card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			gap: 8px;
+			margin-bottom: 4px;
+		}
+
+		.fruit-name-fr {
+			font-weight: 600;
+			font-size: 15px;
+			color: #1C1C1E;
+			line-height: 1.3;
+		}
+
+		.fruit-name-jp {
+			font-size: 12px;
+			color: #C7C7CC;
+			margin-top: 2px;
+			font-style: normal;
+		}
+
+		.fruit-user {
+			font-size: 12px;
+			color: #8E8E93;
+			margin: 4px 0 3px;
+			font-weight: 500;
+		}
+
+		.fruit-power {
+			font-size: 13px;
+			color: #636366;
+			line-height: 1.4;
+		}
+
+		.fruit-type-badge {
+			font-size: 11px;
+			font-weight: 700;
+			padding: 3px 8px;
+			border-radius: 100px;
+			color: #fff;
+			white-space: nowrap;
+			flex-shrink: 0;
+			margin-top: 2px;
+		}
+
+		.type-Paramecia    { background: #0A84FF; }
+		.type-Zoan         { background: #30D158; }
+		.type-Logia        { background: #E3000F; }
+		.type-Zoan-Mythique{ background: #BF5AF2; }
+		.type-Zoan-Antique { background: #FF9F0A; }
+
+		/* ===== DICTIONNAIRE ===== */
+		.dico-list {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			max-height: 430px;
+			overflow-y: auto;
+			background: #fff;
+			border-radius: 16px;
+		}
+
+		.dico-card {
+			background: #fff;
+			border: none;
+			border-radius: 0;
+			padding: 13px 14px;
+			border-bottom: 0.5px solid #F2F2F7;
+			cursor: pointer;
+			transition: background 0.1s;
+		}
+
+		.dico-card:active { background: #F9F9F9; }
+		.dico-card:first-child { border-radius: 16px 16px 0 0; }
+		.dico-card:last-child  { border-radius: 0 0 16px 16px; border-bottom: none; }
+
+		.dico-card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.dico-term {
+			font-weight: 600;
+			font-size: 15px;
+			color: #1C1C1E;
+			flex: 1;
+		}
+
+		.dico-cat-badge {
+			font-size: 11px;
+			font-weight: 700;
+			padding: 3px 8px;
+			border-radius: 100px;
+			color: #fff;
+			white-space: nowrap;
+			flex-shrink: 0;
+		}
+
+		.cat-Fluide     { background: #0A84FF; }
+		.cat-Factions   { background: #E3000F; }
+		.cat-Géographie { background: #30D158; }
+		.cat-Lore       { background: #BF5AF2; }
+		.cat-Combat     { background: #FF9F0A; }
+		.cat-Divers     { background: #636366; }
+
+		.dico-arrow {
+			font-size: 11px;
+			color: #C7C7CC;
+			transition: transform 0.2s ease;
+			flex-shrink: 0;
+		}
+		.dico-arrow.open { transform: rotate(180deg); }
+
+		.dico-def {
+			font-size: 14px;
+			color: #636366;
+			line-height: 1.55;
+			margin-top: 8px;
+			display: none;
+			padding-top: 8px;
+			border-top: 0.5px solid #F2F2F7;
+		}
+		.dico-def.open { display: block; }
+
+		/* ===== MODAL ===== */
+		.modal-overlay {
+			display: none;
+			position: fixed;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: rgba(0,0,0,0.5);
+			backdrop-filter: blur(4px);
+			z-index: 1000;
+			justify-content: center;
+			align-items: flex-end;
+			padding-bottom: env(safe-area-inset-bottom);
+		}
+
+		.modal-content {
+			background: #F2F2F7;
+			width: 100%;
+			max-width: 390px;
+			max-height: 75vh;
+			border-radius: 22px 22px 0 0;
+			padding: 20px 20px 32px;
+			display: flex;
+			flex-direction: column;
+			animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		@keyframes slideUp {
+			from { transform: translateY(100%); }
+			to   { transform: translateY(0); }
+		}
+
+		.modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 16px;
+		}
+
+		.modal-title {
+			font-weight: 700;
+			font-size: 18px;
+			color: #1C1C1E;
+			margin: 0;
+		}
+
+		.close-btn {
+			background: #E5E5EA;
+			border: none;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			font-size: 13px;
+			color: #636366;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 700;
+			padding: 0;
+		}
+
+		.modal-body {
+			overflow-y: auto;
+			font-size: 15px;
+			line-height: 1.6;
+			color: #3A3A3C;
+		}
+
+		/* ===== NAV DU BAS ===== */
 		.bottom-nav {
 			position: fixed;
 			bottom: 0;
@@ -180,363 +493,46 @@
 			right: 0;
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
-			width: 100%;
-			background: #ffffff;
-			border-top: 2px solid #eee;
-			padding: 8px 0;
-			padding-bottom: env(safe-area-inset-bottom); /* iPhone notch */
-			gap: 2px;
+			background: rgba(249,249,249,0.92);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+			border-top: 0.5px solid #D1D1D6;
+			padding: 8px 0 env(safe-area-inset-bottom);
 			z-index: 999;
-			box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
 		}
 
 		.nav-btn {
 			background: none;
-			color: #888;
 			border: none;
-			font-size: 0.7em; /* Plus petit pour tenir en 4 colonnes */
-			padding: 4px 2px;
+			color: #8E8E93;
+			font-size: 10px;
+			font-weight: 500;
+			font-family: inherit;
+			padding: 6px 4px 2px;
 			cursor: pointer;
-			flex-shrink: 0;
-			text-align: center;
-			line-height: 1.3;
-			white-space: nowrap;
-		}
-
-		.nav-btn.active {
-			color: #E3000F;
-			font-weight: bold;
-			border-bottom: 3px solid #E3000F;
-		}
-
-		.nav-btn:active {
-			transform: none;
-			box-shadow: none;
-		}
-
-		/* --- STYLE DES NOUVEAUX ONGLETS --- */
-		.info-list {
-			text-align: left;
-			max-height: 400px;
-			overflow-y: auto;
-		}
-
-		.info-card {
-			background: #f9f9f9;
-			padding: 12px;
-			border-radius: 8px;
-			margin-bottom: 10px;
-			border-left: 4px solid #E3000F;
-		}
-
-		.info-card h4 { margin: 0 0 5px 0; color: #333; }
-		.info-card p { margin: 0; font-size: 0.85em; color: #666; line-height: 1.4; }
-
-		.converter-box {
-			background: #fff3f3;
-			padding: 15px;
-			border-radius: 10px;
-			border: 1px solid #ffcccc;
-		}
-
-		.converter-box input {
-			width: 60px;
-			padding: 8px;
-			border-radius: 5px;
-			border: 1px solid #ccc;
-			text-align: center;
-		}
-
-		.nav-btn:active {
-			transform: none;
-			box-shadow: none;
-		}
-
-		/* Style du bouton quand on est sur son onglet */
-		.nav-btn.active {
-			color: #E3000F; /* Ton rouge One Piece */
-			font-weight: bold;
-			border-bottom: 3px solid #E3000F;
-		}
-
-		/* --- POKÉDEX --- */
-		.search-bar {
-			width: 100%;
-			padding: 12px;
-			margin-bottom: 15px;
-			border: 2px solid #ddd;
-			border-radius: 8px;
-			font-size: 1em;
-			box-sizing: border-box; /* Empêche la barre de déborder de l'écran */
-			outline: none;
-			transition: border-color 0.3s;
-		}
-		.search-bar:focus {
-			border-color: #005C97; /* Bordure bleue quand on tape dedans */
-		}
-
-		.pokedex-grid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr); /* 2 colonnes de taille égale */
-			gap: 10px;
-			max-height: 400px; /* Ajuste cette valeur si tu veux que la zone soit plus grande/petite */
-			overflow-y: auto;
-			padding-right: 5px;
-		}
-
-		.char-card {
-			background: #fff;
-			border: 1px solid #eee;
-			border-radius: 8px;
-			overflow: hidden;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-			text-align: center;
-		}
-
-		.char-img {
-			width: 100%;
-			height: 140px; /* On garde la même hauteur fixe */
-			object-fit: contain; /* <-- LA CORRECTION : On affiche l'image EN ENTIER sans couper */
-			background-color: #fafafa; /* Un fond gris très clair pour combler les espaces vides */
-			border-bottom: 2px solid #E3000F; /* Ta bordure rouge */
-			display: block; /* Aide à l'alignement */
-		}
-
-		.char-name {
-			font-size: 0.85em;
-			font-weight: bold;
-			padding: 8px 4px;
-			color: #333;
-			white-space: nowrap; /* Empêche le texte de passer à la ligne */
-			overflow: hidden;
-			text-overflow: ellipsis; /* Ajoute "..." si le nom est trop long */
-		}
-
-		/* --- POP-UP (MODALE PERSONNAGE) --- */
-		.modal-overlay {
-			display: none; /* Caché par défaut */
-			position: fixed;
-			top: 0; left: 0; width: 100%; height: 100%;
-			background: rgba(0,0,0,0.7); /* Fond noir transparent */
-			z-index: 1000; /* Passe par-dessus tout le reste */
-			justify-content: center;
+			display: flex;
+			flex-direction: column;
 			align-items: center;
+			gap: 3px;
+			transition: color 0.15s;
+			letter-spacing: -0.1px;
 		}
 
-		.modal-content {
-			background: white;
-			width: 85%;
-			max-width: 350px;
-			max-height: 70vh; /* Ne prendra pas plus de 70% de l'écran en hauteur */
-			border-radius: 15px;
-			padding: 20px;
-			display: flex;
-			flex-direction: column;
-			box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+		.nav-btn::before {
+			font-size: 22px;
+			line-height: 1;
 		}
 
-		.modal-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			border-bottom: 2px solid #E3000F;
-			padding-bottom: 10px;
-			margin-bottom: 15px;
-		}
+		/* Icônes via ::before */
+		.nav-btn:nth-child(1)::before { content: "⛵"; }
+		.nav-btn:nth-child(2)::before { content: "📖"; }
+		.nav-btn:nth-child(3)::before { content: "😈"; }
+		.nav-btn:nth-child(4)::before { content: "📚"; }
 
-		.modal-title {
-			font-weight: bold;
-			font-size: 1.2em;
-			color: #333;
-			margin: 0;
-		}
+		.nav-btn.active { color: #E3000F; }
 
-		.close-btn {
-			background: none;
-			border: none;
-			font-size: 1.5em;
-			color: #888;
-			cursor: pointer;
-			padding: 0;
-		}
-
-		.modal-body {
-			overflow-y: auto; /* Permet de faire défiler le texte s'il est long ! */
-			font-size: 0.9em;
-			line-height: 1.5;
-			color: #444;
-		}
-
-		/* --- ONGLET FRUITS DU DÉMON --- */
-		.fruit-filters {
-			display: flex;
-			gap: 8px;
-			margin-bottom: 12px;
-			flex-wrap: wrap;
-		}
-		.filter-btn {
-			padding: 6px 12px !important;
-			font-size: 0.78em !important;
-			border-radius: 20px !important;
-			border: 2px solid #ddd !important;
-			background: #fff !important;
-			color: #555 !important;
-			cursor: pointer;
-			font-weight: 600;
-			transition: all 0.2s;
-			flex: 1;
-		}
-		.filter-btn.active-filter {
-			color: #fff !important;
-			border-color: transparent !important;
-		}
-		.filter-btn[data-type="all"].active-filter   { background: #333 !important; }
-		.filter-btn[data-type="Paramecia"].active-filter { background: #005C97 !important; }
-		.filter-btn[data-type="Zoan"].active-filter  { background: #2e7d32 !important; }
-		.filter-btn[data-type="Logia"].active-filter { background: #E3000F !important; }
-
-		.fruits-grid {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			max-height: 420px;
-			overflow-y: auto;
-			padding-right: 4px;
-		}
-		.fruit-card {
-			background: #fff;
-			border: 1px solid #eee;
-			border-radius: 10px;
-			padding: 10px 12px;
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-		}
-		.fruit-name-fr {
-			font-weight: 700;
-			font-size: 0.95em;
-			color: #222;
-		}
-		.fruit-name-jp {
-			font-size: 0.75em;
-			color: #aaa;
-			font-style: italic;
-			margin-top: 1px;
-		}
-		.fruit-type-badge {
-			font-size: 0.7em;
-			font-weight: bold;
-			padding: 3px 8px;
-			border-radius: 12px;
-			color: #fff;
-			white-space: nowrap;
-		}
-		.type-Paramecia { background: #005C97; }
-		.type-Zoan      { background: #2e7d32; }
-		.type-Logia     { background: #E3000F; }
-		.type-Zoan-Mythique { background: #6a0dad; }
-		.type-Zoan-Antique  { background: #795548; }
-
-		.fruit-user {
-			font-size: 0.8em;
-			color: #888;
-			font-style: italic;
-		}
-		.fruit-power {
-			font-size: 0.82em;
-			color: #555;
-			line-height: 1.4;
-		}
-
-		/* --- ONGLET DICTIONNAIRE --- */
-		.dico-filters {
-			display: flex;
-			gap: 6px;
-			margin-bottom: 12px;
-			flex-wrap: wrap;
-		}
-		.dico-filter-btn {
-			padding: 5px 10px !important;
-			font-size: 0.72em !important;
-			border-radius: 20px !important;
-			border: 2px solid #ddd !important;
-			background: #fff !important;
-			color: #555 !important;
-			cursor: pointer;
-			font-weight: 600;
-			transition: all 0.2s;
-			flex: 1;
-		}
-		.dico-filter-btn.active-dico { color: #fff !important; border-color: transparent !important; }
-		.dico-filter-btn[data-cat="all"].active-dico       { background: #333 !important; }
-		.dico-filter-btn[data-cat="Fluide"].active-dico    { background: #1565C0 !important; }
-		.dico-filter-btn[data-cat="Factions"].active-dico  { background: #E3000F !important; }
-		.dico-filter-btn[data-cat="Géographie"].active-dico{ background: #2e7d32 !important; }
-		.dico-filter-btn[data-cat="Lore"].active-dico      { background: #6a0dad !important; }
-		.dico-filter-btn[data-cat="Combat"].active-dico    { background: #e65100 !important; }
-		.dico-filter-btn[data-cat="Divers"].active-dico    { background: #546e7a !important; }
-
-		.dico-list {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			max-height: 430px;
-			overflow-y: auto;
-			padding-right: 4px;
-		}
-		.dico-card {
-			background: #fff;
-			border: 1px solid #eee;
-			border-radius: 10px;
-			padding: 10px 12px;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-			cursor: pointer;
-			transition: box-shadow 0.2s;
-		}
-		.dico-card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-		.dico-card-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			gap: 8px;
-		}
-		.dico-term {
-			font-weight: 700;
-			font-size: 0.92em;
-			color: #222;
-		}
-		.dico-cat-badge {
-			font-size: 0.68em;
-			font-weight: bold;
-			padding: 3px 7px;
-			border-radius: 12px;
-			color: #fff;
-			white-space: nowrap;
-			flex-shrink: 0;
-		}
-		.cat-Fluide     { background: #1565C0; }
-		.cat-Factions   { background: #E3000F; }
-		.cat-Géographie { background: #2e7d32; }
-		.cat-Lore       { background: #6a0dad; }
-		.cat-Combat     { background: #e65100; }
-		.cat-Divers     { background: #546e7a; }
-
-		.dico-def {
-			font-size: 0.82em;
-			color: #555;
-			line-height: 1.5;
-			margin-top: 6px;
-			display: none; /* Masqué par défaut, révélé au clic */
-		}
-		.dico-def.open { display: block; }
-		.dico-arrow {
-			font-size: 0.8em;
-			color: #bbb;
-			transition: transform 0.2s;
-			flex-shrink: 0;
-		}
-		.dico-arrow.open { transform: rotate(180deg); }
+		/* ===== SCROLLBARS ===== */
+		::-webkit-scrollbar { width: 0; }
 
     </style>
 </head>
@@ -556,14 +552,14 @@
                 <button class="btn-add" onclick="addEpisode()">+1 viewed episode</button>
             </div>
 
-            <h3 style="text-align: left; margin-bottom: 10px; font-size: 1em; color: #666; border-bottom: 2px solid #eee; padding-bottom: 5px;">Progression par Arc</h3>
+			<p class="section-header">Progression par Arc</p>
             <div class="arc-list" id="arcs-container">
                 </div>
         </div>
 
         <div id="tab-pokedex" class="tab-content">
-            <h3 style="text-align: left; margin-bottom: 10px; font-size: 1em; color: #666; border-bottom: 2px solid #eee; padding-bottom: 5px;">Pokédex</h3>
-            
+			<p class="section-header">Pokédex</p>
+			
             <input type="text" id="search-input" class="search-bar" placeholder="Chercher (ex: Luffy, Zoro...)" oninput="filterCharacters()">
             
             <div id="loading-msg" style="color: #888; font-size: 0.9em; margin-bottom: 10px;">Récupération des avis de recherche... 🏴‍☠️</div>
@@ -572,7 +568,7 @@
         </div>
 
 		<div id="tab-fruits" class="tab-content">
-			<h3 style="text-align:left;margin-bottom:10px;font-size:1em;color:#666;border-bottom:2px solid #eee;padding-bottom:5px;">Fruits du Démon</h3>
+			<p class="section-header">Fruits du Démon</p>
 			<input type="text" id="fruit-search" class="search-bar" placeholder="Rechercher (ex: Gomu, Luffy...)" oninput="renderFruits()">
 			<div class="fruit-filters">
 				<button class="filter-btn active-filter" data-type="all" onclick="setFruitFilter('all', this)">Tous</button>
@@ -584,7 +580,7 @@
 		</div>
 
 		<div id="tab-dico" class="tab-content">
-			<h3 style="text-align:left;margin-bottom:10px;font-size:1em;color:#666;border-bottom:2px solid #eee;padding-bottom:5px;">📚 Dictionnaire</h3>
+			<p class="section-header">Dictionnaire</p>
 			<input type="text" id="dico-search" class="search-bar" placeholder="Rechercher (ex: Haki, Ponéglyphe...)" oninput="renderDico()">
 			<div class="dico-filters">
 				<button class="dico-filter-btn active-dico" data-cat="all"        onclick="setDicoFilter('all',this)">Tous</button>
@@ -599,10 +595,10 @@
 		</div>
 
 		<div class="bottom-nav">
-			<button class="nav-btn active" onclick="switchTab('tab-suivi', this)">⛵ Progression</button>
-			<button class="nav-btn" onclick="switchTab('tab-pokedex', this)">📖 Pokédex</button>
-			<button class="nav-btn" onclick="switchTab('tab-fruits', this)">😈 Fruits</button>
-			<button class="nav-btn" onclick="switchTab('tab-dico', this)">📚 Dico</button>
+			<button class="nav-btn active" onclick="switchTab('tab-suivi', this)">Progression</button>
+			<button class="nav-btn" onclick="switchTab('tab-pokedex', this)">Pokédex</button>
+			<button class="nav-btn" onclick="switchTab('tab-fruits', this)">Fruits</button>
+			<button class="nav-btn" onclick="switchTab('tab-dico', this)">Dico</button>
 		</div>
     </div>
 
