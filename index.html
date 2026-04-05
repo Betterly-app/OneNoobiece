@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>One Pace Tracker</title>
-    <link rel="icon" href="data:,">
+    <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
 		/* Thème Clair - One Piece */
@@ -19,6 +19,18 @@
             align-items: center;
         }
         
+		.badge {
+			font-size: 0.7em;
+			padding: 3px 6px;
+			border-radius: 4px;
+			margin-left: 8px;
+			font-weight: bold;
+			color: white;
+		}
+		.badge-kai {
+			background-color: #8e44ad; /* Violet pour différencier */
+		}
+
         .card {
             background-color: #ffffff; /* Carte blanche */
             border-radius: 15px;
@@ -31,13 +43,17 @@
         }
         
         h1 { 
-            margin-top: 0; 
-            color: #E3000F; /* Rouge officiel One Piece */
-            font-size: 1.6em; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 800;
+            margin-top: 0;
+			margin-bottom: 10px; /* Un peu d'espace sous le logo */
+			display: flex;
+			justify-content: center;
         }
+
+		.logo-title-img {
+			max-width: 200px;  /* Ajuste cette valeur selon la forme de ton logo */
+			height: auto;     /* Garde les proportions */
+			max-height: 80px; /* Évite qu'il ne prenne trop de place en hauteur */
+		}
         
         .progress-bar {
             width: 100%;
@@ -140,7 +156,7 @@
 <body>
 
     <div class="card">
-        <h1>One Pace</h1>
+        <h1><img src="logo.png" alt="One Pace Logo" class="logo-title-img"></h1>
         
         <div class="progress-bar">
             <div class="progress-fill" id="progress-fill"></div>
@@ -180,7 +196,26 @@
             { title: "Alabasta", count: 21 },
             { title: "Jaya", count: 8 },
             { title: "Skypiea", count: 25 },
-            { title: "rest of one piece", count: 372 },
+            { title: "Long Ring Long Land", count: 7, version: "en" },
+            { title: "Water Seven", count: 20 },
+            { title: "Enies Lobby", count: 25 },
+            { title: "Post Enies Lobby", count: 5, version: "en" },
+            { title: "Thriller Bark", count: 22, version: "en" },
+            { title: "Sabaody Archipelago", count: 11, version: "en" },
+            { title: "Amazon Lily", count: 5 },
+            { title: "Impel Down", count: 10, version: "en" },
+            { title: "Cover Stories", count: 1 },
+            { title: "Marine Ford", count: 17 },
+            { title: "Post War", count: 8 },
+            { title: "Return to Sabaody", count: 3 },
+            { title: "FishMan Island", count: 24, version: "en" },
+            { title: "Punk Hazard", count: 22, version: "en" },
+            { title: "Dressrosa", count: 48, version: "en" },
+            { title: "Zou", count: 10 },
+            { title: "Whole Cake Island", count: 39 },
+            { title: "Reverie", count: 3 },
+            { title: "Wano", count: 59 },
+            { title: "Egghead", count: 20 },
             // Ajoute les autres arcs ici au fur et à mesure...
         ];
 
@@ -256,6 +291,17 @@
                 } else if (watchedInThisArc > 0) {
                     div.classList.add('in-progress');
                 }
+
+				// On vérifie s'il y a une source spéciale
+				let badgeHTML = '';
+				if (arc.source === "en") {
+					badgeHTML = `<span class="badge badge-kai">no french</span>`;
+				}
+
+				div.innerHTML = `
+					<div class="arc-title">${arc.title} ${badgeHTML}</div>
+					<div class="arc-progress">${watchedInThisArc} / ${arc.count}</div>
+				`;
 
                 div.innerHTML = `
                     <div class="arc-title">${arc.title}</div>
