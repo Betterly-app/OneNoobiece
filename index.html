@@ -349,6 +349,88 @@
 			color: #444;
 		}
 
+		/* --- ONGLET FRUITS DU DÉMON --- */
+		.fruit-filters {
+			display: flex;
+			gap: 8px;
+			margin-bottom: 12px;
+			flex-wrap: wrap;
+		}
+		.filter-btn {
+			padding: 6px 12px !important;
+			font-size: 0.78em !important;
+			border-radius: 20px !important;
+			border: 2px solid #ddd !important;
+			background: #fff !important;
+			color: #555 !important;
+			cursor: pointer;
+			font-weight: 600;
+			transition: all 0.2s;
+			flex: 1;
+		}
+		.filter-btn.active-filter {
+			color: #fff !important;
+			border-color: transparent !important;
+		}
+		.filter-btn[data-type="all"].active-filter   { background: #333 !important; }
+		.filter-btn[data-type="Paramecia"].active-filter { background: #005C97 !important; }
+		.filter-btn[data-type="Zoan"].active-filter  { background: #2e7d32 !important; }
+		.filter-btn[data-type="Logia"].active-filter { background: #E3000F !important; }
+
+		.fruits-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			max-height: 420px;
+			overflow-y: auto;
+			padding-right: 4px;
+		}
+		.fruit-card {
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 10px;
+			padding: 10px 12px;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+		}
+		.fruit-name-fr {
+			font-weight: 700;
+			font-size: 0.95em;
+			color: #222;
+		}
+		.fruit-name-jp {
+			font-size: 0.75em;
+			color: #aaa;
+			font-style: italic;
+			margin-top: 1px;
+		}
+		.fruit-type-badge {
+			font-size: 0.7em;
+			font-weight: bold;
+			padding: 3px 8px;
+			border-radius: 12px;
+			color: #fff;
+			white-space: nowrap;
+		}
+		.type-Paramecia { background: #005C97; }
+		.type-Zoan      { background: #2e7d32; }
+		.type-Logia     { background: #E3000F; }
+		.type-Zoan-Mythique { background: #6a0dad; }
+		.type-Zoan-Antique  { background: #795548; }
+
+		.fruit-user {
+			font-size: 0.8em;
+			color: #888;
+			font-style: italic;
+		}
+		.fruit-power {
+			font-size: 0.82em;
+			color: #555;
+			line-height: 1.4;
+		}
+
     </style>
 </head>
 <body>
@@ -382,10 +464,23 @@
             <div class="pokedex-grid" id="pokedex-container"></div>
         </div>
 
-        <div class="bottom-nav">
-            <button class="nav-btn active" onclick="switchTab('tab-suivi', this)">⛵ Progression</button>
-            <button class="nav-btn" onclick="switchTab('tab-pokedex', this)">📖 Pokédex</button>
-        </div>
+		<div id="tab-fruits" class="tab-content">
+			<h3 style="text-align:left;margin-bottom:10px;font-size:1em;color:#666;border-bottom:2px solid #eee;padding-bottom:5px;">Fruits du Démon</h3>
+			<input type="text" id="fruit-search" class="search-bar" placeholder="Rechercher (ex: Gomu, Luffy...)" oninput="renderFruits()">
+			<div class="fruit-filters">
+				<button class="filter-btn active-filter" data-type="all" onclick="setFruitFilter('all', this)">Tous</button>
+				<button class="filter-btn" data-type="Paramecia" onclick="setFruitFilter('Paramecia', this)">Paramecia</button>
+				<button class="filter-btn" data-type="Zoan" onclick="setFruitFilter('Zoan', this)">Zoan</button>
+				<button class="filter-btn" data-type="Logia" onclick="setFruitFilter('Logia', this)">Logia</button>
+			</div>
+			<div class="fruits-grid" id="fruits-container"></div>
+		</div>
+
+		<div class="bottom-nav">
+			<button class="nav-btn active" onclick="switchTab('tab-suivi', this)">⛵ Progression</button>
+			<button class="nav-btn" onclick="switchTab('tab-pokedex', this)">📖 Pokédex</button>
+			<button class="nav-btn" onclick="switchTab('tab-fruits', this)">😈 Fruits</button>
+		</div>
     </div>
 
 	<div id="char-modal" class="modal-overlay" onclick="if(event.target === this) closeModal()">
@@ -672,9 +767,131 @@
             });
         }
 
+		// --- DONNÉES FRUITS DU DÉMON ---
+		const DEVIL_FRUITS = [
+			// --- PARAMECIA ---
+			{ nameFr: "Fruit de l'Élasticité",     name: "Gomu Gomu no Mi",               user: "Monkey D. Luffy",          type: "Paramecia",     power: "Corps en caoutchouc élastique, immunisé contre les impacts et la foudre." },
+			{ nameFr: "Fruit de la Fragmentation", name: "Bara Bara no Mi",               user: "Buggy le Clown",           type: "Paramecia",     power: "Séparer et contrôler les parties de son corps à distance." },
+			{ nameFr: "Fruit Glisse-Glisse",       name: "Sube Sube no Mi",               user: "Alvida",                   type: "Paramecia",     power: "Peau ultra-lisse rendant toute attaque physique inefficace." },
+			{ nameFr: "Fruit de la Bombe",         name: "Bomu Bomu no Mi",               user: "Mr. 5",                    type: "Paramecia",     power: "Transformer n'importe quelle partie de son corps en bombe." },
+			{ nameFr: "Fruit du Kilo",             name: "Kiro Kiro no Mi",               user: "Miss Valentine",           type: "Paramecia",     power: "Modifier son poids entre 1 g et 10 000 kg à volonté." },
+			{ nameFr: "Fruit des Éclosions",       name: "Hana Hana no Mi",               user: "Nico Robin",               type: "Paramecia",     power: "Faire pousser des répliques de ses membres sur n'importe quelle surface." },
+			{ nameFr: "Fruit de la Cire",          name: "Doru Doru no Mi",               user: "Mr. 3 (Galdino)",          type: "Paramecia",     power: "Produire et contrôler de la cire à volonté." },
+			{ nameFr: "Fruit du Glouton",          name: "Baku Baku no Mi",               user: "Wapol",                    type: "Paramecia",     power: "Mâcher et fusionner avec n'importe quel matériau." },
+			{ nameFr: "Fruit du Mimétisme",        name: "Mane Mane no Mi",               user: "Mr. 2 Bon Clay",           type: "Paramecia",     power: "Copier l'apparence de quelqu'un en le touchant." },
+			{ nameFr: "Fruit du Tailladant",       name: "Supa Supa no Mi",               user: "Daz Bonez (Mr. 1)",        type: "Paramecia",     power: "Transformer son corps en lames d'acier tranchantes." },
+			{ nameFr: "Fruit de l'Épine",          name: "Toge Toge no Mi",               user: "Miss Doublefinger",        type: "Paramecia",     power: "Faire pousser des pointes acérées sur n'importe quelle partie du corps." },
+			{ nameFr: "Fruit de la Prison",        name: "Ori Ori no Mi",                 user: "Hina",                     type: "Paramecia",     power: "Emprisonner les ennemis dans des barreaux en les touchant." },
+			{ nameFr: "Fruit du Ressort",          name: "Bane Bane no Mi",               user: "Bellamy",                  type: "Paramecia",     power: "Transformer ses jambes en ressorts pour des bonds ultra-rapides." },
+			{ nameFr: "Fruit du Ralentissement",   name: "Noro Noro no Mi",               user: "Foxy",                     type: "Paramecia",     power: "Émettre un rayon ralentissant tout ce qu'il touche pendant 30 secondes." },
+			{ nameFr: "Fruit de la Porte",         name: "Doa Doa no Mi",                 user: "Blueno",                   type: "Paramecia",     power: "Créer des portes dans n'importe quelle surface, même dans les airs." },
+			{ nameFr: "Fruit du Savon",            name: "Awa Awa no Mi",                 user: "Kalifa",                   type: "Paramecia",     power: "Produire des bulles de savon dissolvant la puissance des adversaires." },
+			{ nameFr: "Fruit de la Résurrection",  name: "Yomi Yomi no Mi",               user: "Brook",                    type: "Paramecia",     power: "Revenir à la vie une fois après la mort et manipuler les âmes." },
+			{ nameFr: "Fruit des Ombres",          name: "Kage Kage no Mi",               user: "Gecko Moria",              type: "Paramecia",     power: "Voler et manipuler les ombres, les insérer dans des cadavres." },
+			{ nameFr: "Fruit de l'Ectoplasme",     name: "Horo Horo no Mi",               user: "Perona",                   type: "Paramecia",     power: "Créer des fantômes négatifs rendant les victimes déprimées." },
+			{ nameFr: "Fruit de l'Invisibilité",   name: "Suke Suke no Mi",               user: "Absalom / Shiliew",        type: "Paramecia",     power: "Rendre invisible soi-même et les objets que l'on touche." },
+			{ nameFr: "Fruit de l'Amour",          name: "Mero Mero no Mi",               user: "Boa Hancock",              type: "Paramecia",     power: "Pétrifier toute personne ressentant de l'amour ou de la luxure." },
+			{ nameFr: "Fruit du Poison",           name: "Doku Doku no Mi",               user: "Magellan",                 type: "Paramecia",     power: "Produire et contrôler différents types de poisons dévastateurs." },
+			{ nameFr: "Fruit du Tremblement",      name: "Gura Gura no Mi",               user: "Barbe Blanche / Barbe Noire", type: "Paramecia", power: "Créer de puissants tremblements de terre. Fruit Paramecia considéré le plus puissant." },
+			{ nameFr: "Fruit du Bistouri",         name: "Ope Ope no Mi",                 user: "Trafalgar Law",            type: "Paramecia",     power: "Créer une bulle d'espace-temps permettant de tout manipuler à l'intérieur." },
+			{ nameFr: "Fruit du Château",          name: "Shiro Shiro no Mi",             user: "Capone Bege",              type: "Paramecia",     power: "Transformer son corps en forteresse avec un espace intérieur habitable." },
+			{ nameFr: "Fruit de la Paille",        name: "Wara Wara no Mi",               user: "Basil Hawkins",            type: "Paramecia",     power: "Transférer les dégâts reçus à d'autres personnes via des poupées de paille." },
+			{ nameFr: "Fruit Flottant",            name: "Fuwa Fuwa no Mi",               user: "Shiki",                    type: "Paramecia",     power: "Faire léviter et manipuler les objets inanimés à distance." },
+			{ nameFr: "Fruit du Marécage",         name: "Numa Numa no Mi",               user: "Caribou",                  type: "Paramecia",     power: "Transformer son corps en marécage pour absorber objets et personnes." },
+			{ nameFr: "Fruit des Baies",           name: "Beri Beri no Mi",               user: "Very Good",                type: "Paramecia",     power: "Transformer ses membres en sphères rondes pouvant se séparer." },
+			{ nameFr: "Fruit de la Rouille",       name: "Sabi Sabi no Mi",               user: "Shû",                      type: "Paramecia",     power: "Faire rouiller instantanément tout métal ou articulation humaine." },
+			{ nameFr: "Fruit des Roues",           name: "Shari Shari no Mi",             user: "Sharinguru",               type: "Paramecia",     power: "Transformer les bras et les pieds en roues rotatives tranchantes." },
+			// --- LOGIA ---
+			{ nameFr: "Fruit de la Fumée",         name: "Moku Moku no Mi",               user: "Smoker",                   type: "Logia",         power: "Devenir, créer et contrôler la fumée à volonté." },
+			{ nameFr: "Fruit des Sables",          name: "Suna Suna no Mi",               user: "Crocodile",                type: "Logia",         power: "Devenir, créer et contrôler le sable. Peut assécher tout ce qu'il touche." },
+			{ nameFr: "Fulguro-Fruit",             name: "Goro Goro no Mi",               user: "Enel",                     type: "Logia",         power: "Devenir, créer et contrôler la foudre. Quasi-invincible sans Haki." },
+			{ nameFr: "Pyro-Fruit",                name: "Mera Mera no Mi",               user: "Portgas D. Ace / Sabo",    type: "Logia",         power: "Devenir, créer et contrôler le feu à volonté." },
+			{ nameFr: "Givro-Fruit",               name: "Hie Hie no Mi",                 user: "Kuzan (Aokiji)",           type: "Logia",         power: "Devenir, créer et contrôler la glace. Peut geler la mer entière." },
+			{ nameFr: "Fruit des Ténèbres",        name: "Yami Yami no Mi",               user: "Marshall D. Teach",        type: "Logia",         power: "Contrôler les ténèbres et annuler les pouvoirs des autres fruits du démon." },
+			{ nameFr: "Fruit de la Lumière",       name: "Pika Pika no Mi",               user: "Kizaru (Borsalino)",       type: "Logia",         power: "Devenir, créer et contrôler la lumière. Se déplacer à la vitesse de la lumière." },
+			{ nameFr: "Fruit du Magma",            name: "Magu Magu no Mi",               user: "Sakazuki (Akainu)",        type: "Logia",         power: "Devenir, créer et contrôler la lave / magma, plus puissant que le feu." },
+			{ nameFr: "Fruit du Gaz",              name: "Gasu Gasu no Mi",               user: "Caesar Clown",             type: "Logia",         power: "Devenir, créer et contrôler les gaz, y compris les gaz toxiques mortels." },
+			{ nameFr: "Fruit de la Neige",         name: "Yuki Yuki no Mi",               user: "Monet",                    type: "Logia",         power: "Devenir, créer et contrôler la neige à volonté." },
+			// --- ZOAN ---
+			{ nameFr: "Fruit de l'Humain",         name: "Hito Hito no Mi",               user: "Tony Tony Chopper",        type: "Zoan",          power: "Se transformer en humain ou en forme hybride humain-renne." },
+			{ nameFr: "Fruit de l'Ongulé (Bison)", name: "Ushi Ushi no Mi, modèle Bison", user: "Dalton",                   type: "Zoan",          power: "Se transformer en bison ou en forme hybride." },
+			{ nameFr: "Fruit de l'Ongulé (Girafe)",name: "Ushi Ushi no Mi, modèle Girafe",user: "Kaku",                     type: "Zoan",          power: "Se transformer en girafe ou en forme hybride étrange." },
+			{ nameFr: "Fruit du Félin (Léopard)",  name: "Neko Neko no Mi, modèle Léopard",user: "Rob Lucci",               type: "Zoan",          power: "Se transformer en léopard avec une vitesse et une force décuplées." },
+			{ nameFr: "Fruit du Volatile (Faucon)",name: "Tori Tori no Mi, modèle Faucon",user: "Pell",                     type: "Zoan",          power: "Se transformer en faucon, permettant le vol à grande vitesse." },
+			{ nameFr: "Fruit du Volatile (Albatros)",name:"Tori Tori no Mi, modèle Albatros",user:"Morgans",                type: "Zoan",          power: "Se transformer en albatros géant." },
+			{ nameFr: "Fruit du Serpent (Anaconda)",name:"Hebi Hebi no Mi, modèle Anaconda",user:"Boa Sandersonia",          type: "Zoan",          power: "Se transformer en anaconda ou en forme hybride." },
+			{ nameFr: "Fruit du Serpent (Cobra)",  name: "Hebi Hebi no Mi, modèle Cobra Roi",user:"Boa Marigold",           type: "Zoan",          power: "Se transformer en cobra royal ou en forme hybride." },
+			{ nameFr: "Fruit Fouisseur",           name: "Mogu Mogu no Mi",               user: "Miss Merry Christmas",     type: "Zoan",          power: "Se transformer en taupe, creuser dans le sol à grande vitesse." },
+			{ nameFr: "Fruit du Canidé (Loup)",    name: "Inu Inu no Mi, modèle Loup",    user: "Jabura",                   type: "Zoan",          power: "Se transformer en loup ou en forme hybride." },
+			{ nameFr: "Fruit du Canidé (Chacal)",  name: "Inu Inu no Mi, modèle Chacal",  user: "Chaka",                    type: "Zoan",          power: "Se transformer en chacal ou en forme hybride." },
+			{ nameFr: "Fruit de l'Araignée",       name: "Kumo Kumo no Mi",               user: "Black Maria",              type: "Zoan",          power: "Se transformer en une immense araignée." },
+			{ nameFr: "Fruit de l'Éléphant",       name: "Zou Zou no Mi",                 user: "Spandam",                  type: "Zoan",          power: "Se transformer en éléphant." },
+			{ nameFr: "Fruit du Bouddha",          name: "Hito Hito no Mi, modèle Daibutsu",user:"Sengoku",                 type: "Zoan",          power: "Se transformer en immense Bouddha doré produisant des ondes de choc." },
+			{ nameFr: "Fruit du Reptile (Ptérosaure)",name:"Ryu Ryu no Mi, modèle Ptéranodonte",user:"Page One",            type: "Zoan",          power: "Se transformer en ptéranodonte préhistorique." },
+			// --- ZOAN ANTIQUE ---
+			{ nameFr: "Fruit du Reptile (Allosaurus)", name:"Ryu Ryu no Mi, modèle Allosaurus",  user:"X Drake",            type: "Zoan-Antique",  power: "Se transformer en allosaurus préhistorique d'une force dévastatrice." },
+			{ nameFr: "Fruit du Reptile (Brachiosaurus)",name:"Ryu Ryu no Mi, modèle Brachiosaurus",user:"Ulti",            type: "Zoan-Antique",  power: "Se transformer en brachiosaurus, énorme dinosaure à long cou." },
+			{ nameFr: "Fruit du Reptile (Tricératops)", name:"Ryu Ryu no Mi, modèle Tricératops", user:"Sasaki",            type: "Zoan-Antique",  power: "Se transformer en tricératops, chargé avec les cornes comme armes." },
+			{ nameFr: "Fruit de l'Éléphant (Mammouth)", name:"Zou Zou no Mi, modèle Mammouth",    user:"Jack",              type: "Zoan-Antique",  power: "Se transformer en mammouth préhistorique d'une puissance dévastatrice." },
+			// --- ZOAN MYTHIQUE ---
+			{ nameFr: "Fruit du Volatile (Phénix)",name:"Tori Tori no Mi, modèle Phénix",  user:"Marco le Phénix",          type: "Zoan-Mythique", power: "Se transformer en Phénix bleu avec régénération et flammes de résurrection." },
+			{ nameFr: "Fruit du Poisson (Dragon Céleste)",name:"Uo Uo no Mi, modèle Seiryu",user:"Kaido",                   type: "Zoan-Mythique", power: "Se transformer en immense dragon céleste, parmi les plus puissants connus." },
+			{ nameFr: "Fruit de l'Humain (Nika)", name: "Hito Hito no Mi, modèle Nika",    user:"Monkey D. Luffy",          type: "Zoan-Mythique", power: "Le Dieu Soleil Nika : liberté absolue de forme, corps en caoutchouc transcendant." },
+			{ nameFr: "Fruit du Canidé (Renard à 9 Queues)",name:"Inu Inu no Mi, modèle Kyubi",user:"Catarina Devon",       type: "Zoan-Mythique", power: "Copier l'apparence de n'importe quelle personne ou créature." },
+			{ nameFr: "Fruit du Serpent (Yamata no Orochi)",name:"Hebi Hebi no Mi, modèle Yamata no Orochi",user:"Kurozumi Orochi",type:"Zoan-Mythique",power:"Se transformer en serpent à huit têtes, chaque tête ayant sa propre vie." },
+		];
+
+		let currentFruitFilter = 'all';
+
+		function setFruitFilter(type, btn) {
+			currentFruitFilter = type;
+			document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active-filter'));
+			btn.classList.add('active-filter');
+			renderFruits();
+		}
+
+		function renderFruits() {
+			const search = document.getElementById('fruit-search').value.toLowerCase();
+			const container = document.getElementById('fruits-container');
+			container.innerHTML = '';
+
+			const filtered = DEVIL_FRUITS.filter(f => {
+				const matchType = currentFruitFilter === 'all' || f.type === currentFruitFilter || f.type.startsWith(currentFruitFilter);
+				const matchSearch = f.nameFr.toLowerCase().includes(search) 
+									|| f.name.toLowerCase().includes(search) 
+									|| f.user.toLowerCase().includes(search) 
+									|| f.power.toLowerCase().includes(search);
+				return matchType && matchSearch;
+			});
+
+			if (filtered.length === 0) {
+				container.innerHTML = '<p style="color:#888;font-size:0.9em;text-align:center;">Aucun fruit trouvé 🏴‍☠️</p>';
+				return;
+			}
+
+			filtered.forEach(f => {
+				const div = document.createElement('div');
+				div.className = 'fruit-card';
+				const badgeLabel = f.type.replace('Zoan-Mythique', 'Zoan Mythique').replace('Zoan-Antique', 'Zoan Antique');
+				div.innerHTML = `
+					<div class="fruit-card-header">
+						<div>
+							<div class="fruit-name-fr">🍎 ${f.nameFr}</div>
+							<div class="fruit-name-jp">${f.name}</div>
+						</div>
+						<span class="fruit-type-badge type-${f.type}">${f.type.replace('Zoan-Mythique','Zoan Mythique').replace('Zoan-Antique','Zoan Antique')}</span>
+					</div>
+					<div class="fruit-user">👤 ${f.user}</div>
+					<div class="fruit-power">${f.power}</div>
+				`;
+				container.appendChild(div);
+			});
+		}
+
         // --- INITIALISATION ---
         fetchProgress();
 		loadPokedex();
+		renderFruits();
     </script>
 </body>
 </html>
