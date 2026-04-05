@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>One Pace Tracker</title>
 	<link rel="icon" type="image/png" href="https://custom-progress-bar.com/cdn/images/205/one-piece-luffy-straw-hat-custom-progress-bar-m.png">
+	<link rel="apple-touch-icon" href="https://custom-progress-bar.com/cdn/images/205/one-piece-luffy-straw-hat-custom-progress-bar-m.png">
+	<meta name="apple-mobile-web-app-title" content="One Pace">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
 		/* ===== BASE ===== */
@@ -497,7 +501,7 @@
 			backdrop-filter: blur(20px);
 			-webkit-backdrop-filter: blur(20px);
 			border-top: 0.5px solid #D1D1D6;
-			padding: 8px 0 env(safe-area-inset-bottom);
+			padding: 10px 0 calc(env(safe-area-inset-bottom) + 8px);
 			z-index: 999;
 		}
 
@@ -508,7 +512,7 @@
 			font-size: 10px;
 			font-weight: 500;
 			font-family: inherit;
-			padding: 6px 4px 2px;
+			padding: 6px 4px 6px;
 			cursor: pointer;
 			display: flex;
 			flex-direction: column;
