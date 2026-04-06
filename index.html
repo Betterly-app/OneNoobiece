@@ -906,11 +906,19 @@
         </div>
 
         <div id="tab-pokedex" class="tab-content">
-			<p class="section-header">Pokédex</p>
-            <input type="text" id="search-input" class="search-bar" placeholder="Chercher (ex: Luffy, Zoro...)" oninput="filterCharacters()">
-            <div id="loading-msg" style="color:var(--text-muted);font-size:0.9em;margin-bottom:10px;">Récupération des avis de recherche... 🏴‍☠️</div>
-            <div class="pokedex-grid" id="pokedex-container"></div>
-        </div>
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+				<p class="section-header" style="margin: 0;">Pokédex</p>
+				<button style="
+					background: none; border: none; padding: 0; font-size: 12px; color: var(--text-hint); 
+					font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px;
+				" onclick="alert('Ce Pokédex est relié en direct à la base de données mondiale MyAnimeList. Les erreurs affichées ici ne peuvent pas être corrigées manuellement par le Den Den Mushi ! 🐌')">
+					Signaler une erreur <span style="font-size: 14px;">🐌</span>
+				</button>
+			</div>
+			<input type="text" id="search-input" class="search-bar" placeholder="Chercher (ex: Luffy, Zoro...)" oninput="filterCharacters()">
+			<div id="loading-msg" style="color:var(--text-muted);font-size:0.9em;margin-bottom:10px;">Récupération des avis de recherche... 🏴‍☠️</div>
+			<div class="pokedex-grid" id="pokedex-container"></div>
+		</div>
 
 		<div id="tab-fruits" class="tab-content">
 			<p class="section-header">Fruits du Démon</p>
@@ -946,7 +954,15 @@
 		</div>
 
 		<div id="tab-timeline" class="tab-content">
-			<p class="section-header">Chronologie</p>
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+				<p class="section-header" style="margin: 0;">Chronologie</p>
+				<button style="
+					background: none; border: none; padding: 0; font-size: 12px; color: var(--text-hint); 
+					font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px;
+				" onclick="openReportModal('Timeline Globale')">
+					Signaler une erreur <span style="font-size: 14px;">🐌</span>
+				</button>
+			</div>
 			<div class="timeline-list" id="timeline-container"></div>
 		</div>
 
@@ -1033,12 +1049,36 @@
 		</div>
 	</div>
 
+	<div id="report-modal" class="modal-overlay" onclick="if(event.target === this) closeReportModal()">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title">Signaler une erreur ou faire une suggestion d'ajout</h3>
+				<button class="close-btn" onclick="closeReportModal()">✖</button>
+			</div>
+			<div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+				<p id="report-context-text" style="font-size: 13px; color: var(--text-muted); margin: 0;"></p>
+				<textarea id="report-message" placeholder="Quelle est l'erreur ou l'ajout ? (ex: Fausse mer, mauvaise description, précision importante manquante...)" rows="4" style="
+					width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border);
+					background: var(--bg-card); color: var(--text-primary); font-family: inherit;
+					font-size: 14px; outline: none; resize: none; box-sizing: border-box;
+				"></textarea>
+				<button id="report-send-btn" onclick="sendReport()" style="
+					background: #0A84FF; color: white; border: none; padding: 14px;
+					border-radius: 14px; font-weight: 600; cursor: pointer; font-size: 16px; font-family: inherit;
+				">Envoyer par Den Den Mushi 🐌</button>
+			</div>
+		</div>
+	</div>
+
     <script>
         // --- CONFIGURATION SUPABASE ---
 		const SUPABASE_URL = 'https://opjwisewusutlrgvbegc.supabase.co';
 		const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wandpc2V3dXN1dGxyZ3ZiZWdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTg5NzcsImV4cCI6MjA5MDg5NDk3N30.qTQ5OOcF4LjaFmEIDaqPO46MjtiboH1s6gLbMYMJU6E';
         const ROW_ID = 1; // À REMPLACER PAR TON ID
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+		// --- CONFIGURATION DISCORD ---
+		const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1490530526707322974/kDcdMfiI4Q2atY5hTElk5t4uvMjcF6yVFic4YxPcVDYZNJn-vLcrpavH87g5XZK30hZ3';
+		let currentReportContext = ''; // Va mémoriser quelle fiche a une erreur
         
         let currentWatched = 2;
 
@@ -1429,17 +1469,34 @@
 			filtered.forEach(f => {
 				const div = document.createElement('div');
 				div.className = 'fruit-card';
+				const reportContext = `Fruit: ${f.nameFr.replace(/'/g, "\\'")}`;
 				const badgeLabel = f.type.replace('Zoan-Mythique', 'Zoan Mythique').replace('Zoan-Antique', 'Zoan Antique');
+				
 				div.innerHTML = `
 					<div class="fruit-card-header">
 						<div>
 							<div class="fruit-name-fr">🍈​ ${f.nameFr}</div>
 							<div class="fruit-name-jp">${f.name}</div>
 						</div>
-						<span class="fruit-type-badge type-${f.type}">${f.type.replace('Zoan-Mythique','Zoan Mythique').replace('Zoan-Antique','Zoan Antique')}</span>
+						<span class="fruit-type-badge type-${f.type}">${badgeLabel}</span>
 					</div>
 					<div class="fruit-user">👤 <span style="color:#0A84FF;cursor:pointer;font-weight:600;" onclick="openCharacterByName('${f.user.replace(/'/g, "\\'")}')">${f.user}</span></div>
 					<div class="fruit-power">${f.power}</div>
+					
+					<div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+						<button style="
+							background: none; border: none; padding: 4px 0 0 0;
+							font-size: 12px; color: var(--text-hint); font-family: inherit;
+							cursor: pointer; display: flex; align-items: center; gap: 6px;
+							transition: color 0.2s;
+						" 
+						onclick="event.stopPropagation(); openReportModal('${reportContext}')" 
+						onmouseover="this.style.color='var(--text-muted)'" 
+						onmouseout="this.style.color='var(--text-hint)'"
+						>
+							Signaler une erreur <span style="font-size: 14px;">🐌</span>
+						</button>
+					</div>
 				`;
 				container.appendChild(div);
 			});
@@ -2168,13 +2225,34 @@
 				const div = document.createElement('div');
 				div.className = 'dico-card';
 				div.onclick = () => toggleDico(div);
+
+				const reportContext = `Dico: ${d.term.replace(/'/g, "\\'")}`;
+
 				div.innerHTML = `
 					<div class="dico-card-header">
 						<span class="dico-term">${d.term}</span>
 						<span class="dico-cat-badge cat-${d.cat}">${d.cat}</span>
 						<span class="dico-arrow">▼</span>
 					</div>
-					<div class="dico-def">${d.def}</div>
+					<div class="dico-def">
+						${d.def}
+						
+						<div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+							<button style="
+								background: none; border: none; padding: 4px 0 0 0;
+								font-size: 12px; color: var(--text-hint); font-family: inherit;
+								cursor: pointer; display: flex; align-items: center; gap: 6px;
+								transition: color 0.2s;
+							" 
+							onclick="event.stopPropagation(); openReportModal('${reportContext}')" 
+							onmouseover="this.style.color='var(--text-muted)'" 
+							onmouseout="this.style.color='var(--text-hint)'"
+							>
+								Signaler une erreur <span style="font-size: 14px;">🐌</span>
+							</button>
+						</div>
+
+					</div>
 				`;
 				container.appendChild(div);
 			});
@@ -2384,15 +2462,39 @@
 
 				const div = document.createElement('div');
 				div.className = 'prime-card';
+				// Modification à la volée du CSS de la carte pour empiler le contenu et le bouton
+				div.style.flexDirection = 'column';
+				div.style.alignItems = 'stretch';
+				div.style.gap = '0';
+
+				const reportContext = `Prime: ${p.name.replace(/'/g, "\\'")}`;
+
 				div.innerHTML = `
-					<div class="prime-rank ${rankClass}">${rankLabel}</div>
-					<div class="prime-info">
-						<div class="prime-name" onclick="openCharacterByName('${p.name.replace(/'/g,"\\'")}')">
-							${p.name}
+					<div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+						<div class="prime-rank ${rankClass}">${rankLabel}</div>
+						<div class="prime-info">
+							<div class="prime-name" onclick="openCharacterByName('${p.name.replace(/'/g,"\\'")}')">
+								${p.name}
+							</div>
+							<div class="prime-sub">${p.crew}</div>
 						</div>
-						<div class="prime-sub">${p.crew}</div>
+						<div class="prime-amount ${p.ancien ? 'ancien' : ''}">${formatBounty(p.bounty)}${p.ancien?' †':''}</div>
 					</div>
-					<div class="prime-amount ${p.ancien ? 'ancien' : ''}">${formatBounty(p.bounty)}${p.ancien?' †':''}</div>
+					
+					<div style="margin-top: 8px; display: flex; justify-content: flex-end; width: 100%;">
+						<button style="
+							background: none; border: none; padding: 4px 0 0 0;
+							font-size: 12px; color: var(--text-hint); font-family: inherit;
+							cursor: pointer; display: flex; align-items: center; gap: 6px;
+							transition: color 0.2s;
+						" 
+						onclick="event.stopPropagation(); openReportModal('${reportContext}')" 
+						onmouseover="this.style.color='var(--text-muted)'" 
+						onmouseout="this.style.color='var(--text-hint)'"
+						>
+							Signaler une erreur <span style="font-size: 14px;">🐌</span>
+						</button>
+					</div>
 				`;
 				container.appendChild(div);
 			});
@@ -2786,6 +2888,8 @@
 				div.className = 'ile-card';
 				div.onclick = () => toggleIle(div);
 
+				const reportContext = `Île: ${ile.name.replace(/'/g, "\\'")}`;
+
 				const persosBtns = ile.persos.map(p =>
 					`<button class="ile-perso-btn" onclick="event.stopPropagation(); openPersoFromIle('${p.replace(/'/g,"\\'")}')">
 						${p}
@@ -2799,7 +2903,25 @@
 					</div>
 					<div class="ile-eps">📺 ${ile.eps}</div>
 					<div class="ile-details">
-						<div class="ile-desc">${ile.desc}</div>
+						<div class="ile-desc">
+							${ile.desc}
+							
+							<div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+								<button style="
+									background: none; border: none; padding: 4px 0 0 0;
+									font-size: 12px; color: var(--text-hint); font-family: inherit;
+									cursor: pointer; display: flex; align-items: center; gap: 6px;
+									transition: color 0.2s;
+								" 
+								onclick="event.stopPropagation(); openReportModal('${reportContext}')" 
+								onmouseover="this.style.color='var(--text-muted)'" 
+								onmouseout="this.style.color='var(--text-hint)'"
+								>
+									Signaler une erreur <span style="font-size: 14px;">🐌</span>
+								</button>
+							</div>
+
+						</div>
 						<div class="ile-persos-title">Personnages clés</div>
 						<div class="ile-persos">${persosBtns}</div>
 					</div>
@@ -2919,6 +3041,79 @@
 				.update({ episodes_watched: currentWatched, updated_at: new Date().toISOString() })
 				.eq('id', ROW_ID);
 			if (error) { currentWatched++; updateUI(); }
+		}
+
+		function openReportModal(contextName) {
+			currentReportContext = contextName;
+			document.getElementById('report-context-text').innerText = "Fiche concernée : " + contextName;
+			document.getElementById('report-message').value = '';
+			document.getElementById('report-send-btn').innerText = "Envoyer par Den Den Mushi 🐌";
+			document.getElementById('report-modal').style.display = 'flex';
+		}
+
+		function closeReportModal() {
+			document.getElementById('report-modal').style.display = 'none';
+		}
+
+		async function sendReport() {
+			const msg = document.getElementById('report-message').value.trim();
+			if (!msg) return alert("Veuillez décrire l'erreur !");
+
+			const btn = document.getElementById('report-send-btn');
+			btn.innerText = "Récupération des données... 🐌";
+
+			// 1. Récupération de l'adresse IP (via une API publique gratuite)
+			let userIP = "Inconnue";
+			try {
+				const ipRes = await fetch('https://api.ipify.org?format=json');
+				const ipData = await ipRes.json();
+				userIP = ipData.ip;
+			} catch(e) {
+				console.log("Impossible de récupérer l'IP (potentiellement bloqué par un AdBlocker).");
+			}
+
+			// 2. Compilation des informations du sender
+			// Si l'utilisateur est connecté via Supabase, on prend son email, sinon c'est un invité
+			const userInfo = currentUser ? currentUser.email : "Visiteur non connecté";
+			const browserInfo = navigator.userAgent; // Donne le navigateur et l'appareil (ex: iPhone, Chrome, Windows...)
+			const localTime = new Date().toLocaleString('fr-FR'); // Heure exacte de l'ordinateur de l'utilisateur
+			const screenRes = `${window.screen.width}x${window.screen.height}`; // Résolution de l'écran
+
+			btn.innerText = "Appel au QG... 📞";
+
+			// 3. Construction du message Discord
+			const payload = {
+				// Le paramètre MAGIQUE : Il demande à Discord de créer un fil de discussion (Thread) pour ce message
+				thread_name: `🐛 Rapport : ${currentReportContext.substring(0, 50)}`, 
+				
+				content: `Nouveau rapport de bug ouvert pour **${currentReportContext}** !`,
+				embeds: [{
+					title: "Détails du Signalement",
+					color: 14885120, // Rouge "Erreur"
+					description: `**Message de l'utilisateur :**\n${msg}`,
+					fields: [
+						{ name: "👤 Identité", value: userInfo, inline: true },
+						{ name: "🌐 Adresse IP", value: userIP, inline: true },
+						{ name: "🕒 Heure locale", value: localTime, inline: true },
+						{ name: "📱 Résolution", value: screenRes, inline: true },
+						{ name: "💻 Navigateur / Système", value: `\`\`\`${browserInfo}\`\`\``, inline: false }
+					],
+					footer: { text: "Den Den Mushi Tracker" }
+				}]
+			};
+
+			try {
+				await fetch(DISCORD_WEBHOOK_URL, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
+				closeReportModal();
+				alert("Signalement reçu ! Un fil de discussion a été créé au QG. 🐌");
+			} catch (err) {
+				alert("Erreur réseau, le Den Den Mushi n'a pas pu joindre le serveur Discord.");
+				btn.innerText = "Envoyer 🐌";
+			}
 		}
 
         // --- INITIALISATION ---
