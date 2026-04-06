@@ -981,7 +981,7 @@
 	">
 		<img src="https://upload.wikimedia.org/wikipedia/fr/thumb/1/1a/Logo_One_piece.svg/langfr-250px-Logo_One_piece.svg.png" style="max-width:140px;margin-bottom:32px;">
 		<div style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;">
-			<input id="login-email" type="email" placeholder="Email" style="
+			<input id="login-username" type="text" placeholder="Nom d'utilisateur" style="
 				padding:14px;border-radius:14px;border:none;
 				background:var(--bg-card);color:var(--text-primary);
 				font-size:16px;font-family:inherit;outline:none;
@@ -2860,16 +2860,29 @@
 		}
 
 		async function doLogin() {
-			const email    = document.getElementById('login-email').value.trim();
+			// On récupère le pseudo au lieu de l'email
+			const username = document.getElementById('login-username').value.trim();
 			const password = document.getElementById('login-password').value;
 			const errEl    = document.getElementById('login-error');
 			errEl.innerText = '';
 
-			const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-			if (error) {
-				errEl.innerText = 'Email ou mot de passe incorrect.';
+			if (!username || !password) {
+				errEl.innerText = 'Veuillez remplir les deux champs.';
+				return;
 			}
-			// onAuthStateChange s'en occupe si succès
+
+			// L'astuce : on transforme le pseudo en faux email pour satisfaire Supabase
+			const pseudoEmail = username.toLowerCase() + '@onepace.app';
+
+			const { error } = await supabaseClient.auth.signInWithPassword({ 
+				email: pseudoEmail, 
+				password: password 
+			});
+
+			if (error) {
+				errEl.innerText = 'Pseudo ou mot de passe incorrect.';
+			}
+			// Si ça réussit, ton écouteur onAuthStateChange s'occupe déjà de fermer la modale !
 		}
 
 		function skipLogin() {
