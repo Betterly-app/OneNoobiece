@@ -759,6 +759,96 @@
 		}
 		.ile-perso-btn:active { background: #E5E5EA; }
 
+		/* MINI SÉLECTEUR PERSONNAGE */
+		.char-picker-overlay {
+			display: none;
+			position: fixed;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: rgba(0,0,0,0.5);
+			backdrop-filter: blur(4px);
+			z-index: 1001;
+			justify-content: center;
+			align-items: flex-end;
+			padding-bottom: env(safe-area-inset-bottom);
+		}
+		.char-picker-content {
+			background: #F2F2F7;
+			width: 100%;
+			max-width: 390px;
+			border-radius: 22px 22px 0 0;
+			padding: 16px 16px 24px;
+			animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+		.char-picker-title {
+			font-size: 13px;
+			font-weight: 600;
+			color: #8E8E93;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin: 0 4px 10px;
+		}
+		.char-picker-list {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			background: #fff;
+			border-radius: 16px;
+			overflow: hidden;
+			margin-bottom: 10px;
+		}
+		.char-picker-item {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 10px 14px;
+			border-bottom: 0.5px solid #F2F2F7;
+			cursor: pointer;
+			transition: background 0.1s;
+			background: #fff;
+			border: none;
+			width: 100%;
+			font-family: inherit;
+			text-align: left;
+		}
+		.char-picker-item:last-child { border-bottom: none; }
+		.char-picker-item:active { background: #F2F2F7; }
+		.char-picker-img {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			object-fit: cover;
+			background: #E5E5EA;
+			flex-shrink: 0;
+		}
+		.char-picker-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #1C1C1E;
+		}
+		.char-picker-role {
+			font-size: 12px;
+			color: #8E8E93;
+			margin-top: 1px;
+		}
+		.char-picker-cancel {
+			width: 100%;
+			background: #fff;
+			border: none;
+			border-radius: 14px;
+			padding: 14px;
+			font-size: 16px;
+			font-weight: 600;
+			color: #E3000F;
+			font-family: inherit;
+			cursor: pointer;
+		}
+		.char-picker-empty {
+			padding: 16px;
+			text-align: center;
+			font-size: 14px;
+			color: #8E8E93;
+		}
+
     </style>
 </head>
 <body>
@@ -1181,7 +1271,7 @@
 			{ nameFr: "Pyro-Fruit",                name: "Mera Mera no Mi",               user: "Portgas D. Ace / Sabo",    type: "Logia",         power: "Devenir, créer et contrôler le feu à volonté." },
 			{ nameFr: "Givro-Fruit",               name: "Hie Hie no Mi",                 user: "Kuzan (Aokiji)",           type: "Logia",         power: "Devenir, créer et contrôler la glace. Peut geler la mer entière." },
 			{ nameFr: "Fruit des Ténèbres",        name: "Yami Yami no Mi",               user: "Marshall D. Teach",        type: "Logia",         power: "Contrôler les ténèbres et annuler les pouvoirs des autres fruits du démon." },
-			{ nameFr: "Fruit de la Lumière",       name: "Pika Pika no Mi",               user: "Kizaru (Borsalino)",       type: "Logia",         power: "Devenir, créer et contrôler la lumière. Se déplacer à la vitesse de la lumière." },
+			{ nameFr: "Fruit de la Lumière",       name: "Pika Pika no Mi",               user: "Borsalino (Borsalino)",       type: "Logia",         power: "Devenir, créer et contrôler la lumière. Se déplacer à la vitesse de la lumière." },
 			{ nameFr: "Fruit du Magma",            name: "Magu Magu no Mi",               user: "Sakazuki (Akainu)",        type: "Logia",         power: "Devenir, créer et contrôler la lave / magma, plus puissant que le feu." },
 			{ nameFr: "Fruit du Gaz",              name: "Gasu Gasu no Mi",               user: "Caesar Clown",             type: "Logia",         power: "Devenir, créer et contrôler les gaz, y compris les gaz toxiques mortels." },
 			{ nameFr: "Fruit de la Neige",         name: "Yuki Yuki no Mi",               user: "Monet",                    type: "Logia",         power: "Devenir, créer et contrôler la neige à volonté." },
@@ -1254,7 +1344,7 @@
 						</div>
 						<span class="fruit-type-badge type-${f.type}">${f.type.replace('Zoan-Mythique','Zoan Mythique').replace('Zoan-Antique','Zoan Antique')}</span>
 					</div>
-					<div class="fruit-user">👤 ${f.user}</div>
+					<div class="fruit-user">👤 <span style="color:#0A84FF;cursor:pointer;font-weight:600;" onclick="openCharacterByName('${f.user.replace(/'/g, "\\'")}')">${f.user}</span></div>
 					<div class="fruit-power">${f.power}</div>
 				`;
 				container.appendChild(div);
@@ -1308,7 +1398,7 @@
 			{
 				term: "Marine",
 				cat: "Factions",
-				def: "Force militaire navale du Gouvernement Mondial. Chargée de maintenir l'ordre sur les mers et de traquer les pirates. Ses grades vont de Simple Marin à Amiral en Chef. Les Amiraux sont ses combattants d'élite : Akainu, Aokiji et Kizaru en sont les exemples les plus connus."
+				def: "Force militaire navale du Gouvernement Mondial. Chargée de maintenir l'ordre sur les mers et de traquer les pirates. Ses grades vont de Simple Marin à Amiral en Chef. Les Amiraux sont ses combattants d'élite : Akainu, Aokiji et Borsalino en sont les exemples les plus connus."
 			},
 			{
 				term: "CP0 (Cipher Pol 0)",
@@ -1602,7 +1692,7 @@
 			{
 				term: "Sabaody Archipelago",
 				cat: "Géographie",
-				def: "Archipel de bulles géantes situé juste avant Fish-Man Island. Dernière escale avant l'entrée dans le Nouveau Monde. Point de rassemblement des 11 Supernovas. Lieu de la cuisante défaite de l'équipage de Chapeau de Paille face à Kizaru et Kuma."
+				def: "Archipel de bulles géantes situé juste avant Fish-Man Island. Dernière escale avant l'entrée dans le Nouveau Monde. Point de rassemblement des 11 Supernovas. Lieu de la cuisante défaite de l'équipage de Chapeau de Paille face à Borsalino et Kuma."
 			},
 			{
 				term: "Impel Down",
@@ -1634,7 +1724,7 @@
 			{
 				term: "Pacifista",
 				cat: "Lore",
-				def: "Cyborgs de guerre fabriqués par Vegapunk à partir d'humains modifiés, dotés de rayons lasers identiques à ceux de Kizaru. Modèle de base inspiré de Bartholomew Kuma. Remplacés plus tard par les Seraphim, bien plus puissants."
+				def: "Cyborgs de guerre fabriqués par Vegapunk à partir d'humains modifiés, dotés de rayons lasers identiques à ceux de Borsalino. Modèle de base inspiré de Bartholomew Kuma. Remplacés plus tard par les Seraphim, bien plus puissants."
 			},
 			{
 				term: "Seraphim",
@@ -2033,7 +2123,6 @@
 			{ name: "Sabo",                  crew: "Armée Révolutionnaire",     bounty: 602000000 },
 			{ name: "Tony Tony Chopper",     crew: "Équipage Chapeau de Paille",bounty: 1000 },
 			{ name: "Perona",                crew: "Thriller Bark (ancien)",    bounty: 80000000 },
-			{ name: "Coby",                  crew: "Marine / SWORD",            bounty: 0 },
 		];
 
 		// "Dictionnaire VIP" pour forcer les bonnes fiches des personnages populaires
@@ -2057,53 +2146,123 @@
 
 		};
 
-		async function openCharacterByName(name) {
+		// Normalise un nom MAL "Luffy, Monkey D." → "monkey d luffy"
+		function normalizeName(str) {
+			return str
+				.toLowerCase()
+				.replace(/,/g, '')      // enlève les virgules
+				.replace(/\./g, '')     // enlève les points
+				.replace(/\s+/g, ' ')  // normalise les espaces
+				.trim();
+		}
+
+		// Calcule un score de pertinence entre le nom cherché et un nom MAL
+		function matchScore(query, malName) {
+			const q = normalizeName(query);
+			const m = normalizeName(malName);
+
+			// Correspondance exacte → score max
+			if (q === m) return 100;
+
+			// Les mots du nom cherché sont-ils tous dans le nom MAL ?
+			const qWords = q.split(' ');
+			const mWords = m.split(' ');
+			const allFound = qWords.every(w => mWords.some(mw => mw.includes(w) || w.includes(mw)));
+			if (allFound) return 80;
+
+			// Au moins un mot en commun ?
+			const anyFound = qWords.some(w => w.length > 2 && mWords.some(mw => mw.includes(w)));
+			if (anyFound) return 40;
+
+			return 0;
+		}
+
+		function openCharPicker(name) {
+			// Si le Pokédex n'est pas encore chargé, on tente direct via Jikan search
+			if (!allCharacters || allCharacters.length === 0) {
+				openCharacterDirectSearch(name);
+				return;
+			}
+
+			// On cherche les meilleurs matchs dans allCharacters
+			const results = allCharacters
+				.map(c => ({ char: c, score: matchScore(name, c.character.name) }))
+				.filter(r => r.score > 0)
+				.sort((a, b) => b.score - a.score)
+				.slice(0, 5);
+
+			const picker = document.getElementById('char-picker');
+			const list   = document.getElementById('char-picker-list');
+			const title  = document.getElementById('char-picker-title');
+
+			title.innerHTML = `Sorry for the misunderstanding, which <span style="color: #E3000F; text-transform: none;">${name}</span> are we looking for ?`;
+			title.style.textTransform = "none";
+			list.innerHTML = '';
+
+			if (results.length === 0) {
+				// Aucun résultat local → on ouvre directement via recherche API
+				openCharacterDirectSearch(name);
+				return;
+			}
+
+			// Un seul résultat très pertinent (score 100 ou 80 et seul) → ouvre direct
+			if (results.length === 1 || results[0].score === 100) {
+				openCharacter(results[0].char.character.mal_id);
+				return;
+			}
+
+			// Plusieurs résultats → on affiche le sélecteur
+			results.forEach(r => {
+				const c   = r.char.character;
+				const btn = document.createElement('button');
+				btn.className = 'char-picker-item';
+				btn.innerHTML = `
+					<img class="char-picker-img" src="${c.images.jpg.image_url}" alt="${c.name}" loading="lazy">
+					<div>
+						<div class="char-picker-name">${c.name}</div>
+						<div class="char-picker-role">${c.name}</div>
+					</div>
+				`;
+				btn.onclick = () => {
+					closeCharPicker();
+					openCharacter(c.mal_id);
+				};
+				list.appendChild(btn);
+			});
+
+			picker.style.display = 'flex';
+		}
+
+		function closeCharPicker() {
+			document.getElementById('char-picker').style.display = 'none';
+		}
+
+		// Fallback si Pokédex vide : recherche directe Jikan
+		async function openCharacterDirectSearch(name) {
 			const modal = document.getElementById('char-modal');
 			const title = document.getElementById('modal-title');
 			const desc  = document.getElementById('modal-desc');
 			const img   = document.getElementById('modal-img');
-			
 			modal.style.display = 'flex';
 			title.innerText = name;
-			desc.innerText   = "Recherche dans les archives... 🏴‍☠️";
+			desc.innerText = "Recherche... 🏴‍☠️";
 			img.style.display = 'none';
-
-			// 1. Est-ce un personnage VIP (Nami, Vivi, etc.) ?
-			if (primesJikanCache[name]) {
-				return openCharacter(primesJikanCache[name]);
-			}
-
-			// 2. NOUVEAU : On cherche dans le Pokédex One Piece téléchargé en arrière-plan !
-			const searchLower = name.toLowerCase().trim();
-			
-			const localChar = allCharacters.find(c => {
-				// MyAnimeList renvoie les noms sous forme "Nefertari, Vivi". On enlève la virgule.
-				const malName = c.character.name.toLowerCase().replace(',', '');
-				
-				// On vérifie si notre clic ("vivi") est contenu dans le nom officiel ("nefertari vivi")
-				return malName.includes(searchLower) || searchLower.includes(malName);
-			});
-
-			if (localChar) {
-				// On l'a trouvé ! On sauvegarde son ID et on l'ouvre
-				primesJikanCache[name] = localChar.character.mal_id;
-				return openCharacter(localChar.character.mal_id);
-			}
-
-			// 3. Solution de secours : Recherche sur tout MyAnimeList si on ne l'a pas trouvé
 			try {
 				const r = await fetch(`https://api.jikan.moe/v4/characters?q=${encodeURIComponent(name)}&limit=1`);
 				const d = await r.json();
 				if (d.data && d.data.length > 0) {
-					const id = d.data[0].mal_id;
-					primesJikanCache[name] = id;
-					openCharacter(id);
+					openCharacter(d.data[0].mal_id);
 				} else {
-					desc.innerText = "Personnage non trouvé dans la base de données.";
+					desc.innerText = "Personnage non trouvé.";
 				}
 			} catch(e) {
 				desc.innerText = "Erreur de connexion.";
 			}
+		}
+
+		// Remplace openCharacterByName par openCharPicker partout
+		async function openCharacterByName(name) {
+			openCharPicker(name);
 		}
 
 		function formatBounty(n) {
@@ -2226,7 +2385,7 @@
 				color: "dot-purple",
 				events: [
 					{ title: "Thriller Bark", desc: "Combat contre Gecko Moria. Zoro sacrifie toute sa douleur pour protéger Luffy face à Bartholomew Kuma." },
-					{ title: "Arrivée à Sabaody", desc: "Les 11 Supernovas se retrouvent. Luffy frappe un Céleste Dragon. Kizaru arrive. L'équipage est dispersé par Kuma." },
+					{ title: "Arrivée à Sabaody", desc: "Les 11 Supernovas se retrouvent. Luffy frappe un Céleste Dragon. Borsalino arrive. L'équipage est dispersé par Kuma." },
 				]
 			},
 			{
@@ -2324,7 +2483,7 @@
 				mer: "East Blue", merClass: "mer-east",
 				eps: "Épisodes 1–3",
 				desc: "Ville portuaire sous l'emprise du capitaine Morgan et de son fils Helmeppo. C'est là que Luffy libère Roronoa Zoro, prisonnier depuis 3 semaines sans nourriture.",
-				persos: ["Roronoa Zoro", "Coby", "Morgan", "Helmeppo"]
+				persos: ["Roronoa Zoro", "Koby", "Morgan", "Helmeppo"]
 			},
 			{
 				name: "Orange Town",
@@ -2408,7 +2567,7 @@
 				mer: "Grand Line", merClass: "mer-grand",
 				eps: "Épisodes 229–263",
 				desc: "Cité aquatique réputée pour ses charpentiers et sa compagnie Galley-La. L'équipage y répare le Going Merry mais apprend que le navire est irréparable. Robin disparaît mystérieusement.",
-				persos: ["Franky", "Iceberg", "Rob Lucci", "Kaku", "Blueno", "Paulie", "Coby"]
+				persos: ["Franky", "Iceburg", "Rob Lucci", "Kaku", "Blueno", "Paulie", "Koby"]
 			},
 			{
 				name: "Enies Lobby",
@@ -2428,8 +2587,8 @@
 				name: "Sabaody Archipelago",
 				mer: "Grand Line", merClass: "mer-grand",
 				eps: "Épisodes 382–405",
-				desc: "Archipel de bulles géantes, dernière escale avant Fish-Man Island. Les 11 Supernovas se croisent. Luffy frappe un Céleste Dragon. Kizaru dévaste le groupe. Kuma disperse tout l'équipage.",
-				persos: ["Kizaru", "Kuma", "Rayleigh", "Trafalgar Law", "Eustass Kid", "Hancock", "Shakky"]
+				desc: "Archipel de bulles géantes, dernière escale avant Fish-Man Island. Les 11 Supernovas se croisent. Luffy frappe un Céleste Dragon. Borsalino dévaste le groupe. Kuma disperse tout l'équipage.",
+				persos: ["Borsalino", "Kuma", "Rayleigh", "Trafalgar Law", "Eustass Kid", "Hancock", "Shakky"]
 			},
 			{
 				name: "Amazon Lily",
@@ -2450,7 +2609,7 @@
 				mer: "Grand Line", merClass: "mer-grand",
 				eps: "Épisodes 459–489",
 				desc: "Base centrale de la Marine et lieu de la Guerre au Sommet. Barbe Blanche mobilise ses 16 flottes. Ace est exécuté malgré tout. Barbe Blanche meurt debout. Shanks met fin à la guerre.",
-				persos: ["Portgas D. Ace", "Barbe Blanche", "Akainu", "Aokiji", "Kizaru", "Sengoku", "Garp", "Shanks"]
+				persos: ["Portgas D. Ace", "Barbe Blanche", "Akainu", "Aokiji", "Borsalino", "Sengoku", "Garp", "Shanks"]
 			},
 			{
 				name: "Fish-Man Island",
@@ -2499,7 +2658,7 @@
 				mer: "Nouveau Monde", merClass: "mer-new",
 				eps: "Épisodes 1086–en cours",
 				desc: "Île futuriste laboratoire de Vegapunk avec 900 ans d'avance technologique. Vegapunk révèle l'histoire du monde avant d'être assassiné. Les Gorosei révèlent leur vrai visage monstrueux.",
-				persos: ["Vegapunk", "Rob Lucci", "Kizaru", "Gorosei", "Bonney", "Atlas", "Shaka", "York"]
+				persos: ["Vegapunk", "Rob Lucci", "Borsalino", "Bonney", "Atlas", "Shaka", "York"]
 			},
 		];
 
@@ -2564,5 +2723,12 @@
 		renderTimeline();
 		renderIles();
     </script>
+	<div id="char-picker" class="char-picker-overlay" onclick="if(event.target===this) closeCharPicker()">
+		<div class="char-picker-content">
+			<p class="char-picker-title" id="char-picker-title">Choisir un personnage</p>
+			<div class="char-picker-list" id="char-picker-list"></div>
+			<button class="char-picker-cancel" onclick="closeCharPicker()">Annuler</button>
+		</div>
+	</div>
 </body>
 </html>
