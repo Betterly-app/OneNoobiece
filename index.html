@@ -893,7 +893,7 @@
 				<button style="
 					background:var(--bg-secondary);color:var(--text-muted);padding:14px;
 					font-size:15px;border-radius:14px;flex:1;cursor:default;width:100%;
-				" onclick="showLoginPrompt()">🔒 Connecte-toi pour modifier</button>
+				" onclick="showLoginPrompt()">🔒 Connecte-toi pour modifier l'avancée</button>
 			</div>
 
 			<div class="btn-group" id="btn-group-auth" style="display:none;">
@@ -957,7 +957,7 @@
 		</div>
 
 		<div class="bottom-nav">
-			<button class="nav-btn active" onclick="switchTab('tab-suivi', this)">Suivi</button>
+			<button class="nav-btn active" onclick="switchTab('tab-suivi', this)">TV</button>
 			<button class="nav-btn" onclick="switchTab('tab-pokedex', this)">Pokédex</button>
 			<button class="nav-btn" onclick="switchTab('tab-fruits', this)">Fruits</button>
 			<button class="nav-btn" onclick="switchTab('tab-dico', this)">Dico</button>
@@ -2837,7 +2837,7 @@
 			if (!logoutBtn) {
 				logoutBtn = document.createElement('button');
 				logoutBtn.id = 'logout-btn';
-				logoutBtn.innerText = '⎋';
+				logoutBtn.innerText = '🚫​';
 				logoutBtn.title = 'Se déconnecter';
 				logoutBtn.style.cssText = `
 					position:fixed;top:12px;left:16px;
